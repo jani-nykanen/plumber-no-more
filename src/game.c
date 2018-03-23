@@ -3,68 +3,83 @@
 
 #include "game.h"
 
-#include "sys.h"
-#include "graph.h"
-#include "vector.h"
-#include "input.h"
-#include "bitmap.h"
+#include "stage.h"
+#include "player.h"
 
-#include <dos.h>
-#include <conio.h>
-#include <bios.h>
+#include "engine/sys.h"
+#include "engine/graph.h"
+#include "engine/vector.h"
+#include "engine/bitmap.h"
 
 #include "stdlib.h"
 #include "stdio.h"
 #include "stdbool.h"
 
-// Test object position
-static VEC2 pos;
-
-// Test bitmap
-static BITMAP* bmpTest;
-
-
-// Initialize
-static void game_init() {
-
-    // Set default values
-    pos = vec2(160,100);
-
-    // Load assets
-    bmpTest = load_bitmap("ASSETS/TEST.BIN");
-}
+// Game objects
+static PLAYER player;
 
 
 // Update game
 static void game_update() {
 
-    VEC2 stick = input_get_stick();
+    // Update game objects
+    pl_update(&player);
+}
 
-    // Draw old
-    fill_rect(pos.x-8,pos.y-8,16,16, 0);
 
-    pos.x += stick.x *3;
-    pos.y += stick.y *3;
+// Draw before update
+static void game_pre_draw() {
 
-    // Draw new
-    draw_bitmap_region(bmpTest,24,24,16,16,pos.x-8,pos.y-8, FLIP_H);
+    // Pre-draw moving objects
+    pl_pre_draw(&player);
+}
+
+
+// Draw
+static void game_draw() {
+
+    // Draw moving objects
+    pl_draw(&player);
+}
+
+
+// Update game
+static void game_loop() {
+
+    // Pre-draw
+    game_pre_draw();
+
+    // Update
+    game_update();
+    
+    // Post-draw
+    game_draw();
+    
+}
+
+
+// Initialize
+void game_init() {
+
+    // Initialize components
+    stage_init();
+    pl_init();
+
+    // Load default map
+    stage_load("ASSETS/MAPS/TEST.BIN");
+
+    // Draw map
+    stage_draw();
+
+    // Create objects
+    player = pl_create(vec2(5*16 +8, 4*16 +8));
 }
 
 
 // Start game scene
 void start_game_scene() {
 
-    // Init
-    game_init();
-
-    // Draw test bitmaps
-    draw_bitmap(bmpTest, 8,8, FLIP_H);
-    draw_bitmap_region(bmpTest,16,16,32,32,240,16, FLIP_H);
-
     // Set update function
-    set_update_func(game_update);
-
-    // Draw text
-    draw_text("Hello world!",16,5, 97); 
+    set_update_func(game_loop);
 
 }

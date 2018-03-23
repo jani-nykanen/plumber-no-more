@@ -83,12 +83,20 @@ void fill_rect(short dx, short dy, short w, short h, char color) {
 
     char* VGA = (char*)VGA_POS;     
     short y = dy;
-    short offset;
+    short x;
+    short offset = 320*dy + dx;
 
-    for(; y < dy+h; ++ y) {
+    // Go through pixels & draw them
+    for(y = dy; y < dy + h; ++ y) {
 
-        offset = 320*y + dx;
-        memset(VGA + offset, color, w);
+        for(x = dx; x < dx + w; ++ x) {
+
+            // Put pixel
+            VGA[offset ++] = color;
+        }
+
+        offset -= w;
+        offset += 320;
     }
 }
 
@@ -203,10 +211,10 @@ void draw_bitmap_region(BITMAP* b,
 
 
 // Draw text 
-void draw_text(const char* text, short x, short y, char color) {
+void draw_text(const char* text, short x, short y) {
 
     char pos[64];
-    snprintf(pos, 64, "\x1b[%dm\033[%d;%dH",color, y, x);
+    snprintf(pos, 64, "\033[%d;%dH", y, x);
 
     printf("%s%s\n",pos, text);
 }
