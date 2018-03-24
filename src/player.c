@@ -12,6 +12,15 @@
 // Bitmaps
 static BITMAP* bmpPlayer;
 
+// Constants
+static const short H_SPEED = 60;
+static const short WALL_H_SPEED = 160;
+static const short V_SPEED = 140;
+static const short H_ACC = 6;
+static const short V_ACC = 8;
+static const short JUMP1 = 240;
+static const short JUMP2 = 180;
+
 
 // Control player
 static void pl_control(PLAYER* pl) {
@@ -20,23 +29,45 @@ static void pl_control(PLAYER* pl) {
     char fire;
 
     pl->target.x = 0;
-    pl->target.y = 400;
+    pl->target.y = V_SPEED;
+
+    // If wall-sliding, reduce gravity
+    if(pl->touchWall && pl->wallSlideTimer > 0) {
+
+        pl->target.y = V_SPEED / 2;
+    }
 
     // Horizontal movement
     if(stick.x > 0) {
 
-        pl->target.x = 3 *100;
+        pl->target.x = H_SPEED;
     }
     else if(stick.x < 0) {
 
-        pl->target.x = -3 *100;
+        pl->target.x = -H_SPEED;
     }
 
     // Jumping
     fire = input_get_button(BUTTON_FIRE);
-    if(pl->canJump && fire == PRESSED) {
+    if(fire == PRESSED) {
 
-        pl->speed.y = -800;
+        if(pl->canJump) {
+
+            pl->speed.y = -JUMP1;
+
+        }
+        else if(pl->wallSlideTimer > 0) {
+
+            pl->speed.x = (pl->dir == 0 ? 1 : -1) * WALL_H_SPEED;
+            pl->speed.y = -JUMP1;
+            pl->doubleJump = false;
+            pl->wallSlideTimer = 0;
+        }
+        else if(!pl->doubleJump) {
+
+            pl->speed.y = -JUMP2;
+            pl->doubleJump = true;
+        }
     }
     else if(!pl->canJump && pl->speed.y < 0 && fire == RELEASED) {
 
@@ -68,21 +99,26 @@ static void pl_move_coord(PLAYER* pl, short* coord,  short* target, short speed)
 }
 
 
-
 // Move player
 static void pl_move(PLAYER* pl) {
 
     // Calculate old position
     pl->oldPos = vec2(pl->pos.x/100, pl->pos.y/100);
 
-    pl_move_coord(pl, &pl->speed.x, &pl->target.x, 40);
-    pl_move_coord(pl, &pl->speed.y, &pl->target.y, 80);
+    pl_move_coord(pl, &pl->speed.x, &pl->target.x, H_ACC);
+    pl_move_coord(pl, &pl->speed.y, &pl->target.y, V_ACC);
     pl->pos.x += pl->speed.x;
     pl->pos.y += pl->speed.y;
 
     // Set facing direction
-    if(pl->target.x != 0)
+    if(pl->target.x != 0 && pl->wallSlideTimer <= 0)
         pl->dir = pl->target.x >= 0;
+
+    // Update wall slide timer
+    if(pl->wallSlideTimer > 0) {
+
+        -- pl->wallSlideTimer;
+    }
 }
 
 
@@ -96,9 +132,29 @@ static void pl_animate(PLAYER* pl) {
     // On air
     if(!pl->canJump) {
 
-        frame = pl->speed.y < 0 ? 0 : 1;
-        pl->spr.frame = frame;
-        pl->spr.row = 1;
+
+        // Wall sliding
+        if(pl->touchWall && pl->wallSlideTimer > 0) {
+
+            pl->spr.frame = 6;
+            pl->spr.row = 1;
+        }
+        else {
+
+            // Double jump
+            if(pl->doubleJump && pl->speed.y < 0) {
+
+                spr_animate(&pl->spr, 1, 2,5, 4);
+            }
+            // Normal jump
+            else {
+
+                frame = pl->speed.y < 0 ? 0 : 1;
+                pl->spr.frame = frame;
+                pl->spr.row = 1;
+            }
+
+        }
 
         return;
     }
@@ -111,7 +167,8 @@ static void pl_animate(PLAYER* pl) {
     }
     else {
 
-        speed = 4 - abs(pl->speed.x/100);
+
+        speed = 8 - abs(pl->speed.x/40)*2;
         spr_animate(&pl->spr,0, 1,6, (char)speed);
     }
 
@@ -140,6 +197,9 @@ PLAYER pl_create(VEC2 p) {
 
     pl.dir = true;
     pl.canJump = false;
+    pl.doubleJump = false;
+    pl.touchWall = false;
+    pl.wallSlideTimer = 0;
 
     return pl;
 
@@ -154,15 +214,16 @@ void pl_update(PLAYER* pl) {
     pl_animate(pl);
 
     pl->canJump = false;
-    pl_floor_collision(pl, 0, 8*16 +8, 320);
+    pl->touchWall = false;
+
 }
 
 
 // Pre-draw a player
 void pl_pre_draw(PLAYER* pl) {
     
-    int px = pl->pos.x / 100;
-    int py = pl->pos.y / 100;
+    short px = pl->pos.x / 100;
+    short py = pl->pos.y / 100;
 
     fill_rect(px-8,py-16,16,16, 0);
 }
@@ -171,8 +232,8 @@ void pl_pre_draw(PLAYER* pl) {
 // Draw a player
 void pl_draw(PLAYER* pl) {
 
-    int x = pl->pos.x / 100;
-    int y = pl->pos.y / 100;
+    short x = pl->pos.x / 100;
+    short y = pl->pos.y / 100;
 
     spr_draw(&pl->spr,bmpPlayer, x-8,y-16, pl->dir ? FLIP_NONE : FLIP_H);
 }
@@ -181,14 +242,111 @@ void pl_draw(PLAYER* pl) {
 // Floor collision
 void pl_floor_collision(PLAYER* pl, short x, short y, short w) {
 
-    int px = pl->pos.x / 100;
-    int py = pl->pos.y / 100;
+    short px = pl->pos.x / 100;
+    short py = pl->pos.y / 100;
 
-    if(px+8 >= x && px-8 <= x+w && pl->speed.y > 0 && py > y-2 && py < y + 8) {
+    if(px+8 > x && px-8 < x+w && pl->speed.y > 0 && py > y-2 && py < y + 8) {
 
         pl->speed.y = 0;
         pl->pos.y = y * 100;
 
         pl->canJump = true;
+        pl->doubleJump = false;
+    }
+}
+
+
+// Ceiling collision
+void pl_ceiling_collision(PLAYER* pl, short x, short y, short w) {
+
+    short px = pl->pos.x / 100;
+    short py = pl->pos.y / 100 -16;
+
+    if(px+8 > x && px-8 < x+w && pl->speed.y < 0 && py < y+2 && py > y - 8) {
+
+        pl->speed.y = 0;
+        pl->pos.y = (y+16) * 100;
+    }
+}
+
+
+// Wall collision
+void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir) {
+
+    short px = pl->pos.x / 100;
+    short py = pl->pos.y / 100;
+    bool collided = false;
+    VEC2 stick = input_get_stick();
+
+    if(py > y && py-16 < y+h ) {
+
+        if(dir) {
+
+            if(px+8 >= x && px+8 < x+8 && pl->speed.x > 0) {
+
+                pl->pos.x = (x-8) * 100;
+                pl->speed.x = 0;
+                collided = true;
+            }
+        }
+        else {
+
+            if(px-8 <= x && px-8 > x-8 && pl->speed.x < 0) {
+
+                pl->pos.x = (x+8) * 100;
+                pl->speed.x = 0;
+                collided = true;
+            }
+        }
+    }
+
+    if(collided ) {
+
+        pl->touchWall = true;
+
+        if(pl->speed.y > 0.0 && !pl->canJump
+        && ( (dir && stick.x > 0) || (!dir && stick.x < 0) ))
+            pl->wallSlideTimer = 16;
+        
+        else
+            pl->wallSlideTimer = 0;
+    }
+}
+
+
+// Stage collision
+void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
+
+    short px = (pl->pos.x / 100) / 16;
+    short py = (pl->pos.y / 100) / 16;
+
+    short sx = px-2;
+    short sy = py-2;
+    short ex = px+2;
+    short ey = py+2;
+
+    short x,y;
+    char tile;
+
+    // Limit
+    if(sx < 0) sx = 0;
+    if(sy < 0) sy = 0;
+    if(ex >= w-1) ex = w-1;
+    if(ey >= h-1) ey = h-1;
+
+    // Go through nearby tiles & get collisions
+    for(y=sy; y <= ey; ++ y) {
+
+        for(x=sx; x <= ex; ++ x) {
+
+            tile = data[y * w + x];
+            if(tile == 0)
+                continue;
+
+            pl_floor_collision(pl, x*16, y*16 +8, 16);
+            pl_wall_collision(pl, x*16, y*16 +8, 16, true);
+            pl_wall_collision(pl, x*16 +16, y*16 +8, 16, false);
+            pl_ceiling_collision(pl, x*16, y*16 +16 +8, 16);
+        }
     }
 }

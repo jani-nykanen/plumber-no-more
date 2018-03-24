@@ -22,6 +22,9 @@ typedef struct {
     
     bool dir;
     bool canJump;
+    bool doubleJump;
+    short wallSlideTimer;
+    bool touchWall;
 
 }
 PLAYER;
@@ -43,5 +46,14 @@ void pl_draw(PLAYER* pl);
 
 // Floor collision
 void pl_floor_collision(PLAYER* pl, short x, short y, short w);
+
+// Ceiling collision
+void pl_ceiling_collision(PLAYER* pl, short x, short y, short w);
+
+// Wall collision
+void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir);
+
+// Stage collision
+void pl_stage_collision(PLAYER* pl, char* data, short w, short h);
 
 #endif // __PLAYER__

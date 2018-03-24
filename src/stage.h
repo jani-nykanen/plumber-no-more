@@ -4,6 +4,8 @@
 #ifndef __STAGE__
 #define __STAGE__
 
+#include "player.h"
+
 // Initialize stage
 void stage_init();
 
@@ -12,5 +14,8 @@ void stage_load(const char* path);
 
 // Draw stage
 void stage_draw();
+
+// Stage-to-player collisions
+void stage_player_collision(PLAYER* pl);
 
 #endif // __STAGE__

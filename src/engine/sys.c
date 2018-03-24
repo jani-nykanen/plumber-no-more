@@ -13,7 +13,7 @@
 #include "stdbool.h"
 
 // Frame wait
-static const short FRAME_WAIT = 40;
+static const unsigned short FRAME_WAIT = 0;
 
 // Is running
 static bool isRunning;
@@ -41,6 +41,7 @@ void sys_loop() {
 
     while(isRunning) {
 
+        // VSync
         while(inp(0x3DA) & 8);
         while(!(inp(0x3DA) & 8));
 

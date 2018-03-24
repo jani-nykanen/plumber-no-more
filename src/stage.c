@@ -79,3 +79,10 @@ void stage_draw() {
     }
 
 }
+
+
+// Stage-to-player collisions
+void stage_player_collision(PLAYER* pl) {
+
+    pl_stage_collision(pl, tiles, width, height);
+}

@@ -24,6 +24,7 @@ static void game_update() {
 
     // Update game objects
     pl_update(&player);
+    stage_player_collision(&player);
 }
 
 
