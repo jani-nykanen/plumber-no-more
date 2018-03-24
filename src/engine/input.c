@@ -14,12 +14,41 @@ unsigned char normalKeys[0x60];
 // Extended keys
 unsigned char extKeys[0x60];
 
+// Normal key states
+unsigned char keyStates[0x60];
+
 // Handlers
 void far interrupt (*oldHandler)(void);
 
-
 // "Analogue stick"
 static VEC2 stick;
+// Button key codes
+static const short buttons[] = {
+    57, 28
+};
+
+
+// Key down
+static void key_down(short sc) {
+
+    if(sc < 0 || sc >= 0x60 || keyStates[sc] == DOWN)
+        return;
+
+    keyStates[sc] = PRESSED;
+
+}
+
+
+// Key up
+static void key_up(short sc) {
+
+    if(sc < 0 || sc >= 0x60 || keyStates[sc] == UP)
+        return;
+
+    keyStates[sc] = RELEASED;
+
+}
+
 
 // Keyboard interruption
 // (Happily copied from one very helpful Stack Overflow answer!)
@@ -56,6 +85,12 @@ static void far interrupt handler() {
     else if (scancode < 0x60) {
 
         normalKeys[scancode] = make_break;
+
+        // Normal key events
+        if(make_break == 1)
+            key_down(scancode);
+        else
+            key_up(scancode);
     }
 
     outp(0x20, 0x20);
@@ -84,13 +119,23 @@ static void unhook_keyb_int() {
 // Initialize
 void input_init() {
 
+    short i = 0;
+
     // Init handleres
     hook_keyb_int();
+
+    // Set key states to UP
+    for(; i < 0x60; ++ i) {
+
+        keyStates[i] = UP;
+    }
 }
 
 
 // Update
 void input_update() {
+
+    short i = 0;
 
     // Update stick
     stick.x = 0;
@@ -105,6 +150,19 @@ void input_update() {
         stick.y = -1;
     else if(extKeys[80] == 1)
         stick.y = 1;     
+
+    // Update key states
+    for(; i < 0x60; ++ i) {
+
+        if(keyStates[i] == PRESSED) {
+
+            keyStates[i] = DOWN;
+        }
+        else if(keyStates[i] == RELEASED) {
+
+            keyStates[i] = UP;
+        }
+    }
 }
 
 
@@ -112,6 +170,12 @@ void input_update() {
 VEC2 input_get_stick() {
 
     return stick;
+}
+
+// Get button
+char input_get_button(short id) {
+
+    return keyStates[ buttons[id] ];
 }
 
 

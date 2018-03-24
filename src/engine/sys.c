@@ -41,9 +41,13 @@ void sys_loop() {
 
     while(isRunning) {
 
-        input_update();
+        while(inp(0x3DA) & 8);
+        while(!(inp(0x3DA) & 8));
+
         if(fnUpdate != NULL)
             fnUpdate();
+
+        input_update();
 
         delay(FRAME_WAIT);
 

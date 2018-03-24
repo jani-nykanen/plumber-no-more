@@ -19,9 +19,9 @@ typedef struct {
 
     SPRITE spr;
     char lastFrame;
-
-    bool hasMoved;
+    
     bool dir;
+    bool canJump;
 
 }
 PLAYER;
@@ -40,5 +40,8 @@ void pl_pre_draw(PLAYER* pl);
 
 // Draw a player
 void pl_draw(PLAYER* pl);
+
+// Floor collision
+void pl_floor_collision(PLAYER* pl, short x, short y, short w);
 
 #endif // __PLAYER__
