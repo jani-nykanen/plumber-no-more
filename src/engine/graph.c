@@ -218,3 +218,10 @@ void draw_text(const char* text, short x, short y) {
 
     printf("%s%s\n",pos, text);
 }
+
+
+// Clear screen
+void clear(char color) {
+
+    memset((char*)VGA_POS, color, 320*200);
+}

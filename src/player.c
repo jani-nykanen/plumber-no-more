@@ -343,10 +343,20 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
             if(tile == 0)
                 continue;
 
-            pl_floor_collision(pl, x*16, y*16 +8, 16);
-            pl_wall_collision(pl, x*16, y*16 +8, 16, true);
-            pl_wall_collision(pl, x*16 +16, y*16 +8, 16, false);
-            pl_ceiling_collision(pl, x*16, y*16 +16 +8, 16);
+            pl_floor_collision(pl, x*16, y*16 -8, 16);
+            pl_wall_collision(pl, x*16, y*16 -8, 16, true);
+            pl_wall_collision(pl, x*16 +16, y*16 -8, 16, false);
+            pl_ceiling_collision(pl, x*16, y*16 +16 -8, 16);
         }
     }
+
+    // Limit left side
+    if(pl->pos.x-800 < 0 && pl->speed.x < 0) {
+
+        pl->pos.x = 800;
+        pl->speed.x = 0;
+    }
+
+    // Top ceiling collision
+    pl_ceiling_collision(pl,0,0,320);
 }

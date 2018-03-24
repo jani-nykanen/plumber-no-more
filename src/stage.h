@@ -10,7 +10,10 @@
 void stage_init();
 
 // Load stage
-void stage_load(const char* path);
+void stage_load(unsigned short index);
+
+// Load next stage
+void stage_load_next();
 
 // Draw stage
 void stage_draw();

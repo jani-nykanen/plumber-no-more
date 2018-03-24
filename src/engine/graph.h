@@ -31,5 +31,7 @@ void draw_bitmap_region(BITMAP* b, short sx, short sy, short sw, short sh, short
 // Draw text (note: coordinates not screen coords!)
 void draw_text(const char* text, short x, short y);
 
+// Clear screen
+void clear(char color);
 
 #endif // __GRAPH__

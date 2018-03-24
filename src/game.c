@@ -67,10 +67,7 @@ void game_init() {
     pl_init();
 
     // Load default map
-    stage_load("ASSETS/MAPS/TEST.BIN");
-
-    // Draw map
-    stage_draw();
+    stage_load(1);
 
     // Create objects
     player = pl_create(vec2(5*16 +8, 4*16 +8));

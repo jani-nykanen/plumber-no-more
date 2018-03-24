@@ -10,7 +10,7 @@
 #include "stdlib.h"
 
 // Map size (in tiles)
-#define MAP_SIZE 240
+#define MAP_SIZE 260
 
 // Stage tile data
 static char tiles[MAP_SIZE];
@@ -19,6 +19,9 @@ static char tiles[MAP_SIZE];
 static short width;
 // Map height (unneeded)
 static short height;
+
+// Map index
+static short mapIndex;
 
 // Bitmaps
 static BITMAP* bmpTiles;
@@ -33,10 +36,17 @@ void stage_init() {
 
 
 // Load stage
-void stage_load(const char* path) {
+void stage_load(unsigned short index) {
+
+    char path[64];
+    FILE* f;
+
+    mapIndex = index;
+
+    snprintf(path,64, "ASSETS/MAPS/%d.BIN", index);
 
     // Open
-    FILE* f = fopen(path,"rb");
+    f = fopen(path,"rb");
     if(f == NULL) {
 
         printf("Failed to open %s!\n", path);
@@ -52,6 +62,16 @@ void stage_load(const char* path) {
 
     // Close
     fclose(f);
+
+    // Draw
+    stage_draw();
+}
+
+
+// Load next stage
+void stage_load_next() {
+
+    stage_load(++ mapIndex);
 }
 
 
@@ -74,7 +94,7 @@ void stage_draw() {
             sx = ( (short)tile) % 16;
             sy = ( (short)tile) / 16;
 
-            draw_bitmap_region(bmpTiles, sx*16,sy*16,16,16, x*16,y*16 +8, FLIP_NONE);
+            draw_bitmap_region(bmpTiles, sx*16,sy*16,16,16, x*16,y*16-8, FLIP_NONE);
         }
     }
 
@@ -85,4 +105,19 @@ void stage_draw() {
 void stage_player_collision(PLAYER* pl) {
 
     pl_stage_collision(pl, tiles, width, height);
+
+    if(pl->pos.x/100 >= 320-8) {
+
+        // Clear
+        clear(0);
+
+        // Load next
+        stage_load_next();
+
+        // Draw stage
+        stage_draw();
+
+        // Move player back to left side
+        pl->pos.x = 800 + ( pl->pos.x - (320-8)*100);
+    }
 }
