@@ -8,17 +8,20 @@
 #include <bios.h>
 
 #include "stdio.h"
+#include "stdbool.h"
 
 // Normal keys
-unsigned char normalKeys[0x60];
+static unsigned char normalKeys[0x60];
 // Extended keys
-unsigned char extKeys[0x60];
+static unsigned char extKeys[0x60];
 
-// Normal key states
-unsigned char keyStates[0x60];
+// Old key states
+static unsigned char oldNormals[0x60];
+// Read states
+static bool statesRead[0x60];
 
 // Handlers
-void far interrupt (*oldHandler)(void);
+static void far interrupt (*oldHandler)(void);
 
 // "Analogue stick"
 static VEC2 stick;
@@ -26,28 +29,6 @@ static VEC2 stick;
 static const short buttons[] = {
     44, 28
 };
-
-
-// Key down
-static void key_down(short sc) {
-
-    if(sc < 0 || sc >= 0x60 || keyStates[sc] == DOWN)
-        return;
-
-    keyStates[sc] = PRESSED;
-
-}
-
-
-// Key up
-static void key_up(short sc) {
-
-    if(sc < 0 || sc >= 0x60 || keyStates[sc] == UP)
-        return;
-
-    keyStates[sc] = RELEASED;
-
-}
 
 
 // Keyboard interruption
@@ -84,13 +65,11 @@ static void far interrupt handler() {
     } 
     else if (scancode < 0x60) {
 
+        oldNormals[scancode] = normalKeys[scancode];
         normalKeys[scancode] = make_break;
 
-        // Normal key events
-        if(make_break == 1)
-            key_down(scancode);
-        else
-            key_up(scancode);
+        if(normalKeys[scancode] != oldNormals[scancode])
+            statesRead[scancode] = false;
     }
 
     outp(0x20, 0x20);
@@ -120,22 +99,18 @@ static void unhook_keyb_int() {
 void input_init() {
 
     short i = 0;
-
-    // Init handleres
-    hook_keyb_int();
-
-    // Set key states to UP
     for(; i < 0x60; ++ i) {
 
-        keyStates[i] = UP;
+        oldNormals[i] = 255;
     }
+
+    // Init handlers
+    hook_keyb_int();
 }
 
 
 // Update
 void input_update() {
-
-    short i = 0;
 
     // Update stick
     stick.x = 0;
@@ -151,18 +126,6 @@ void input_update() {
     else if(extKeys[80] == 1)
         stick.y = 1;     
 
-    // Update key states
-    for(; i < 0x60; ++ i) {
-
-        if(keyStates[i] == PRESSED) {
-
-            keyStates[i] = DOWN;
-        }
-        else if(keyStates[i] == RELEASED) {
-
-            keyStates[i] = UP;
-        }
-    }
 }
 
 
@@ -175,7 +138,21 @@ VEC2 input_get_stick() {
 // Get button
 char input_get_button(short id) {
 
-    return keyStates[ buttons[id] ];
+    char state = normalKeys[ buttons[id] ];
+    bool read = statesRead[ buttons[id] ];
+    char ret = 0;
+
+    if(state == DOWN) {
+
+        ret = read ? DOWN : PRESSED;
+    }
+    else if(state == UP) {
+
+        ret = read ? UP : RELEASED;
+    }
+    statesRead[buttons[id]] = true;
+
+    return ret;
 }
 
 
