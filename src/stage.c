@@ -27,6 +27,22 @@ static short mapIndex;
 static BITMAP* bmpTiles;
 
 
+// Calculate start position for the player
+static short calc_start_pos() {
+
+    short y = 0;
+    for(; y < height-1; ++ y) {
+
+        if(tiles[y * width] == 0 && tiles[(y+1) * width ] != 0) {
+
+            return y;
+        }
+    }
+
+    return y;
+}
+
+
 // Initialize stage
 void stage_init() {
 
@@ -119,5 +135,9 @@ void stage_player_collision(PLAYER* pl) {
 
         // Move player back to left side
         pl->pos.x = 800 + ( pl->pos.x - (320-8)*100);
+
+        // Calculate new starting position
+        pl->startPos.x = 800;
+        pl->startPos.y = (calc_start_pos()) * 16 * 100 +800;
     }
 }

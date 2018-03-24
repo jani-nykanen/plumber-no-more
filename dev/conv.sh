@@ -1,4 +1,5 @@
 #!/bin/sh
+cd "$(dirname "$0")"
 
 # Tilemaps
 ../tools/tmx2bin maps/1.tmx ../ASSETS/MAPS/1.BIN
@@ -9,3 +10,4 @@
 # Bitmaps
 ../tools/png2bin bitmaps/player.png ../ASSETS/BITMAPS/PLAYER.BIN
 ../tools/png2bin bitmaps/tiles.png ../ASSETS/BITMAPS/TILES.BIN
+../tools/png2bin bitmaps/font.png ../ASSETS/BITMAPS/FONT.BIN
