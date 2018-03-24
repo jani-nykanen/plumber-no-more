@@ -70,7 +70,7 @@ void game_init() {
     stage_load(1);
 
     // Create objects
-    player = pl_create(vec2(5*16 +8, 4*16 +8));
+    player = pl_create(vec2(6*16 +8, 10*16 +8));
 }
 
 

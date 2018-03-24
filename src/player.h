@@ -13,6 +13,7 @@
 typedef struct {
 
     VEC2 pos;
+    VEC2 startPos;
     VEC2 oldPos;
     VEC2 speed;
     VEC2 target;
@@ -25,6 +26,7 @@ typedef struct {
     bool doubleJump;
     short wallSlideTimer;
     bool touchWall;
+    bool dying;
 
 }
 PLAYER;
@@ -44,14 +46,17 @@ void pl_pre_draw(PLAYER* pl);
 // Draw a player
 void pl_draw(PLAYER* pl);
 
+// Kill the player
+void pl_kill(PLAYER* pl);
+
 // Floor collision
-void pl_floor_collision(PLAYER* pl, short x, short y, short w);
+void pl_floor_collision(PLAYER* pl, short x, short y, short w, bool fatal);
 
 // Ceiling collision
-void pl_ceiling_collision(PLAYER* pl, short x, short y, short w);
+void pl_ceiling_collision(PLAYER* pl, short x, short y, short w, bool fatal);
 
 // Wall collision
-void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir);
+void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir, bool fatal);
 
 // Stage collision
 void pl_stage_collision(PLAYER* pl, char* data, short w, short h);

@@ -80,19 +80,19 @@ static void pl_control(PLAYER* pl) {
 // Coordinate movement
 static void pl_move_coord(PLAYER* pl, short* coord,  short* target, short speed)
 {
-    if(*target > *coord)
-    {
+    if(*target > *coord) {
+
         *coord += speed ;
-        if(*coord >= *target)
-        {
+        if(*coord >= *target) {
+
             *coord = *target;
         }
     }
-    else if(*target < *coord)
-    {
+    else if(*target < *coord) {
+
         *coord -= speed ;
-        if(*coord  <= *target)
-        {
+        if(*coord  <= *target) {
+
             *coord = *target;
         }
     }
@@ -176,6 +176,25 @@ static void pl_animate(PLAYER* pl) {
 }
 
 
+// Let the player respawn!
+static void pl_respawn(PLAYER* pl) {
+
+    pl->pos = pl->startPos;
+    pl->dying = false;
+}
+
+
+// Die
+static void pl_die(PLAYER* pl) {
+
+    spr_animate(&pl->spr,2,0,6, pl->spr.frame == 0 ? 30 : 5 );
+    if(pl->spr.frame == 6) {
+
+        pl_respawn(pl);
+    }
+}
+
+
 // Initialize global player components
 void pl_init() {
 
@@ -189,6 +208,7 @@ PLAYER pl_create(VEC2 p) {
 
     PLAYER pl;
     pl.pos = vec2(p.x * 100, p.y * 100);
+    pl.startPos = pl.pos;
     pl.oldPos = pl.pos;
     pl.speed = vec2(0,0);
     pl.target = pl.speed;
@@ -200,6 +220,7 @@ PLAYER pl_create(VEC2 p) {
     pl.doubleJump = false;
     pl.touchWall = false;
     pl.wallSlideTimer = 0;
+    pl.dying = false;
 
     return pl;
 
@@ -208,6 +229,13 @@ PLAYER pl_create(VEC2 p) {
 
 // Update a player
 void pl_update(PLAYER* pl) {
+
+    // Time to die (if it's time to die, though)
+    if(pl->dying) {
+
+        pl_die(pl);
+        return;
+    }
 
     pl_control(pl);
     pl_move(pl);
@@ -239,8 +267,20 @@ void pl_draw(PLAYER* pl) {
 }
 
 
+// Kill the player
+void pl_kill(PLAYER* pl) {
+
+    if(pl->dying) return;
+
+    pl->dying = true;
+    pl->spr.frame = 0;
+    pl->spr.row = 2;
+    pl->spr.count = 0;
+}
+
+
 // Floor collision
-void pl_floor_collision(PLAYER* pl, short x, short y, short w) {
+void pl_floor_collision(PLAYER* pl, short x, short y, short w, bool fatal) {
 
     short px = pl->pos.x / 100;
     short py = pl->pos.y / 100;
@@ -252,12 +292,18 @@ void pl_floor_collision(PLAYER* pl, short x, short y, short w) {
 
         pl->canJump = true;
         pl->doubleJump = false;
+
+        if(fatal) {
+
+            pl_kill(pl);
+            return;
+        }
     }
 }
 
 
 // Ceiling collision
-void pl_ceiling_collision(PLAYER* pl, short x, short y, short w) {
+void pl_ceiling_collision(PLAYER* pl, short x, short y, short w, bool fatal) {
 
     short px = pl->pos.x / 100;
     short py = pl->pos.y / 100 -16;
@@ -266,12 +312,18 @@ void pl_ceiling_collision(PLAYER* pl, short x, short y, short w) {
 
         pl->speed.y = 0;
         pl->pos.y = (y+16) * 100;
+
+        if(fatal) {
+
+            pl_kill(pl);
+            return;
+        }
     }
 }
 
 
 // Wall collision
-void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir) {
+void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir, bool fatal) {
 
     short px = pl->pos.x / 100;
     short py = pl->pos.y / 100;
@@ -302,6 +354,12 @@ void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir) {
 
     if(collided ) {
 
+        if(fatal) {
+
+            pl_kill(pl);
+            return;
+        }
+
         pl->touchWall = true;
 
         if(pl->speed.y > 0.0 && !pl->canJump
@@ -316,6 +374,8 @@ void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir) {
 
 // Stage collision
 void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
+
+    bool fatal;
 
     short px = (pl->pos.x / 100) / 16;
     short py = (pl->pos.y / 100) / 16;
@@ -343,10 +403,12 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
             if(tile == 0)
                 continue;
 
-            pl_floor_collision(pl, x*16, y*16 -8, 16);
-            pl_wall_collision(pl, x*16, y*16 -8, 16, true);
-            pl_wall_collision(pl, x*16 +16, y*16 -8, 16, false);
-            pl_ceiling_collision(pl, x*16, y*16 +16 -8, 16);
+            fatal = ( (tile >= 12 && tile <= 14 ) || (tile >= 28 && tile <= 30) );
+
+            pl_floor_collision(pl, x*16, y*16 -8, 16 ,fatal);
+            pl_wall_collision(pl, x*16, y*16 -8, 16, true, fatal);
+            pl_wall_collision(pl, x*16 +16, y*16 -8, 16, false, fatal);
+            pl_ceiling_collision(pl, x*16, y*16 +16 -8, 16, fatal);
         }
     }
 
@@ -358,5 +420,5 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
     }
 
     // Top ceiling collision
-    pl_ceiling_collision(pl,0,0,320);
+    pl_ceiling_collision(pl,0,0,320, false);
 }
