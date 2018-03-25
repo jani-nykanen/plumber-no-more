@@ -56,6 +56,8 @@ void stage_init() {
 // Load stage
 void stage_load(unsigned short index) {
 
+    short t = 0;
+    short x,y;
     char path[64];
     FILE* f;
 
@@ -77,6 +79,29 @@ void stage_load(unsigned short index) {
 
     // Read data
     fread(tiles, width*height, 1, f);
+
+    // Remove object tiles
+    for(y = 0; y < height; ++ y) {
+
+        for(x = 0; x < width; ++ x) {
+
+            t = tiles[y*width + x];
+            if(t >= 6*16 +1) {
+            
+                switch(t) {
+
+                case 97:
+                    game_add_coin(vec2(x * 16, y * 16 -8 ));
+                    break;
+
+                default: 
+                    break;
+                }
+            
+                tiles[y*width + x] = 0;
+            }
+        }
+    }
 
     // Close
     fclose(f);
@@ -128,6 +153,9 @@ void stage_player_collision(PLAYER* pl) {
 
         // Clear
         clear(0);
+
+        // Reset game
+        game_reset();
 
         // Load next
         stage_load_next();

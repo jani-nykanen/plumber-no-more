@@ -40,7 +40,11 @@ static void get_time_string(char* buf) {
 // Get lives string
 static void get_lives_string(char* buf) {
 
-    snprintf(buf,64, "xx%d", lives);
+    if(lives >= 10)
+        snprintf(buf,64, "xx%d", lives);
+    else
+        snprintf(buf,64, "xx0%d", lives);
+        
     buf[0] = 1;
     buf[1] = 3;
 
@@ -118,4 +122,31 @@ void info_draw() {
         draw_text(bmpFont, str, 320-48,12,0,0, true);
     }
 
+}
+
+
+// Reduce a life 
+char info_reduce_life() {
+
+    if(lives > 0) {
+
+        livesChanged = true;
+        -- lives;
+    }
+
+    return lives;
+}
+
+
+// Add a coin
+void info_add_coin() {
+
+    ++ coins;
+    if(coins == 10) {
+
+        coins = 0;
+        ++ lives;
+        livesChanged = true;
+    }
+    coinsChanged = true;
 }

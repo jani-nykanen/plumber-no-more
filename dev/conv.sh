@@ -20,3 +20,4 @@ cd "$(dirname "$0")"
 ../tools/png2bin bitmaps/player.png ../ASSETS/BITMAPS/PLAYER.BIN
 ../tools/png2bin bitmaps/tiles.png ../ASSETS/BITMAPS/TILES.BIN
 ../tools/png2bin bitmaps/font.png ../ASSETS/BITMAPS/FONT.BIN
+../tools/png2bin bitmaps/coin.png ../ASSETS/BITMAPS/COIN.BIN

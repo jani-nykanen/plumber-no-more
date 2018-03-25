@@ -16,4 +16,10 @@ void info_draw_static();
 // Draw changing info material
 void info_draw();
 
+// Reduce a life 
+char info_reduce_life();
+
+// Add a coin
+void info_add_coin();
+
 #endif // __INFO__

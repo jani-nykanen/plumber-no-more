@@ -3,6 +3,8 @@
 
 #include "player.h"
 
+#include "info.h"
+
 #include "engine/graph.h"
 #include "engine/input.h"
 
@@ -32,7 +34,7 @@ static void pl_control(PLAYER* pl) {
     pl->target.y = V_SPEED;
 
     // If wall-sliding, reduce gravity
-    if(pl->touchWall && pl->wallSlideTimer > 0) {
+    if(pl->speed.y > 0 && pl->touchWall && pl->wallSlideTimer > 0) {
 
         pl->target.y = V_SPEED / 2;
     }
@@ -58,7 +60,7 @@ static void pl_control(PLAYER* pl) {
         }
         else if(pl->wallSlideTimer > 0) {
 
-            pl->speed.x = (pl->dir == 0 ? 1 : -1) * WALL_H_SPEED;
+            pl->speed.x = (pl->wallDir == 0 ? 1 : -1) * WALL_H_SPEED;
             pl->speed.y = -JUMP1;
             pl->doubleJump = false;
             pl->wallSlideTimer = 0;
@@ -136,7 +138,7 @@ static void pl_animate(PLAYER* pl) {
 
 
         // Wall sliding
-        if(pl->touchWall && pl->wallSlideTimer > 0) {
+        if(pl->speed.y > 0 && pl->touchWall && pl->wallSlideTimer > 0) {
 
             pl->spr.frame = 6;
             pl->spr.row = 1;
@@ -181,8 +183,11 @@ static void pl_animate(PLAYER* pl) {
 // Let the player respawn!
 static void pl_respawn(PLAYER* pl) {
 
+    info_reduce_life();
+
     pl->pos = pl->startPos;
     pl->dying = false;
+    pl->respawning = true;
 }
 
 
@@ -194,6 +199,22 @@ static void pl_die(PLAYER* pl) {
 
         pl_respawn(pl);
     }
+}
+
+// Respawn animation
+static void pl_respawn_anim(PLAYER* pl) {
+
+    spr_animate(&pl->spr,3,0,6, 5);
+    if(pl->spr.frame == 6) {
+
+        pl->respawning = false;
+        pl->spr.row = 0;
+        pl->spr.frame = 0;
+    }
+
+    pl->dir = true;
+    pl->speed.x = 0;
+    pl->speed.y = 0;
 }
 
 
@@ -223,6 +244,7 @@ PLAYER pl_create(VEC2 p) {
     pl.touchWall = false;
     pl.wallSlideTimer = 0;
     pl.dying = false;
+    pl.respawning = true;
 
     return pl;
 
@@ -231,6 +253,13 @@ PLAYER pl_create(VEC2 p) {
 
 // Update a player
 void pl_update(PLAYER* pl) {
+
+    // If respawning
+    if(pl->respawning) {
+
+        pl_respawn_anim(pl);
+        return;
+    }
 
     // Time to die (if it's time to die, though)
     if(pl->dying) {
@@ -365,11 +394,12 @@ void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir, bool fat
         pl->touchWall = true;
 
         if(pl->speed.y > 0.0 && !pl->canJump
-        && ( (dir && stick.x > 0) || (!dir && stick.x < 0) ))
+            && ( (dir && stick.x > 0) || (!dir && stick.x < 0) )) {
+
             pl->wallSlideTimer = 16;
-        
-        else
-            pl->wallSlideTimer = 0;
+            pl->wallDir = dir;
+
+        }
     }
 }
 
@@ -422,5 +452,5 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
     }
 
     // Top ceiling collision
-    pl_ceiling_collision(pl,0,0,320, false);
+    pl_ceiling_collision(pl,0,10,320, false);
 }
