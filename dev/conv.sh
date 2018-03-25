@@ -8,6 +8,13 @@ cd "$(dirname "$0")"
 ../tools/tmx2bin maps/4.tmx ../ASSETS/MAPS/4.BIN
 ../tools/tmx2bin maps/5.tmx ../ASSETS/MAPS/5.BIN
 ../tools/tmx2bin maps/6.tmx ../ASSETS/MAPS/6.BIN
+../tools/tmx2bin maps/7.tmx ../ASSETS/MAPS/7.BIN
+../tools/tmx2bin maps/8.tmx ../ASSETS/MAPS/8.BIN
+../tools/tmx2bin maps/9.tmx ../ASSETS/MAPS/9.BIN
+../tools/tmx2bin maps/10.tmx ../ASSETS/MAPS/10.BIN
+../tools/tmx2bin maps/11.tmx ../ASSETS/MAPS/11.BIN
+../tools/tmx2bin maps/12.tmx ../ASSETS/MAPS/12.BIN
+../tools/tmx2bin maps/13.tmx ../ASSETS/MAPS/13.BIN
 
 # Bitmaps
 ../tools/png2bin bitmaps/player.png ../ASSETS/BITMAPS/PLAYER.BIN

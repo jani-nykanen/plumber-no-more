@@ -32,7 +32,7 @@ static BITMAP* bmpTiles;
 // Calculate start position for the player
 static short calc_start_pos() {
 
-    short y = 0;
+    short y = 4;
     for(; y < height-1; ++ y) {
 
         if(tiles[y * width] == 0 && tiles[(y+1) * width ] != 0) {
