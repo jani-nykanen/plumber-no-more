@@ -102,6 +102,8 @@ static void pl_move_coord(PLAYER* pl, short* coord,  short* target, short speed)
 // Move player
 static void pl_move(PLAYER* pl) {
 
+    VEC2 stick = input_get_stick();
+
     // Calculate old position
     pl->oldPos = vec2(pl->pos.x/100, pl->pos.y/100);
 
@@ -111,8 +113,8 @@ static void pl_move(PLAYER* pl) {
     pl->pos.y += pl->speed.y;
 
     // Set facing direction
-    if(pl->target.x != 0 && pl->wallSlideTimer <= 0)
-        pl->dir = pl->target.x >= 0;
+    if(stick.x != 0)
+        pl->dir = stick.x >= 0;
 
     // Update wall slide timer
     if(pl->wallSlideTimer > 0) {

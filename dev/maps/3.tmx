@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="13" tilewidth="16" tileheight="16" backgroundcolor="#000000" nextobjectid="1">
- <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="48">
-  <image source="../bitmaps/tiles.png" width="256" height="48"/>
+ <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="64">
+  <image source="../bitmaps/tiles.png" width="256" height="64"/>
  </tileset>
  <layer name="Tile Layer 1" width="20" height="13">
   <data encoding="csv">
 48,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,
 48,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,
-48,0,0,0,0,0,0,20,0,0,0,4,0,0,0,0,0,0,0,0,
-48,0,0,0,0,0,0,20,0,0,0,20,0,0,0,0,0,0,0,0,
+48,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,
+48,0,0,0,0,0,0,20,0,0,0,13,0,0,0,0,0,0,0,0,
 1,0,0,0,0,22,6,21,6,6,6,21,6,6,6,21,0,0,0,0,
 2,3,30,0,0,0,0,20,0,0,0,0,0,0,0,20,0,0,0,0,
 18,19,30,0,0,0,14,21,0,0,0,0,0,0,0,20,0,0,0,1,

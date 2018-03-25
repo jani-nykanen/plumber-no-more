@@ -7,6 +7,9 @@
 // Initialize
 void game_init();
 
+// Redraw the game
+void game_redraw();
+
 // Start game scene
 void start_game_scene();
 

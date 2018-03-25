@@ -5,6 +5,7 @@
 
 #include "stage.h"
 #include "player.h"
+#include "info.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -25,6 +26,9 @@ static void game_update() {
     // Update game objects
     pl_update(&player);
     stage_player_collision(&player);
+
+    // Update info
+    info_update();
 }
 
 
@@ -41,6 +45,9 @@ static void game_draw() {
 
     // Draw moving objects
     pl_draw(&player);
+
+    // Draw changing info
+    info_draw();
 }
 
 
@@ -65,12 +72,23 @@ void game_init() {
     // Initialize components
     stage_init();
     pl_init();
+    info_init();
 
     // Load default map
     stage_load(1);
 
+    // Draw static info
+    info_draw_static();
+
     // Create objects
     player = pl_create(vec2(6*16 +8, 10*16 +8));
+}
+
+
+// Redraw the game
+void game_redraw() {
+
+    info_draw_static();
 }
 
 

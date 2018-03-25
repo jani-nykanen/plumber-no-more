@@ -3,6 +3,8 @@
 
 #include "stage.h"
 
+#include "game.h"
+
 #include "engine/bitmap.h"
 #include "engine/graph.h"
 
@@ -130,8 +132,8 @@ void stage_player_collision(PLAYER* pl) {
         // Load next
         stage_load_next();
 
-        // Draw stage
-        stage_draw();
+        // Redraw game
+        game_redraw();
 
         // Move player back to left side
         pl->pos.x = 800 + ( pl->pos.x - (320-8)*100);

@@ -211,12 +211,42 @@ void draw_bitmap_region(BITMAP* b,
 
 
 // Draw text 
-void draw_text(const char* text, short x, short y) {
+void draw_text(BITMAP* b, const char* text, short dx, short dy, short xoff, short yoff, bool center) {
+    
+    char len = strlen((const char*)text);
 
-    char pos[64];
-    snprintf(pos, 64, "\033[%d;%dH", y, x);
+    short x = dx;
+    short y = dy;
+    short cw = b->w / 16;
+    short ch = cw; //  b->h / 16;
+    short i=0;
+    char c;
+    short sx;
+    short sy;
 
-    printf("%s%s\n",pos, text);
+    if(center) {
+
+        dx -= (len* + cw) / 2;
+        x = dx;
+    }
+
+    for(; i < len;  ++ i) {
+
+        c = text[i];
+        if(c == '\n') {
+
+            x = dx;
+            y += yoff + ch;
+            continue;
+        }
+
+        sx = c % 16;
+        sy = c / 16;
+
+        draw_bitmap_region(b,sx*cw,sy*ch,cw,ch,x,y,0);
+
+        x += cw + xoff;
+    }
 }
 
 

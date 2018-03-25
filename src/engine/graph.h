@@ -6,6 +6,8 @@
 
 #include "bitmap.h"
 
+#include "stdbool.h"
+
 // Flipping flags
 enum {
 
@@ -28,8 +30,8 @@ void draw_bitmap(BITMAP* b, short x, short y, char flip);
 // Draw a bitmap region
 void draw_bitmap_region(BITMAP* b, short sx, short sy, short sw, short sh, short dx, short dy, char flip);
 
-// Draw text (note: coordinates not screen coords!)
-void draw_text(const char* text, short x, short y);
+// Draw text
+void draw_text(BITMAP* font, const char* text, short x, short y, short xoff, short yoff, bool center);
 
 // Clear screen
 void clear(char color);

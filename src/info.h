@@ -7,7 +7,13 @@
 // Initialize info
 void info_init();
 
-// Draw info
+// Update info
+void info_update();
+
+// Draw non-changing info material
+void info_draw_static();
+
+// Draw changing info material
 void info_draw();
 
 #endif // __INFO__
