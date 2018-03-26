@@ -9,6 +9,8 @@
 
 #include "game.h"
 
+#include <conio.h>
+
 
 // Main
 void main() {

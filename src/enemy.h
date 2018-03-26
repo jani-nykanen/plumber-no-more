@@ -4,6 +4,8 @@
 #ifndef __ENEMY__
 #define __ENEMY__
 
+#include "player.h"
+
 #include "engine/vector.h"
 #include "engine/sprite.h"
 
@@ -40,5 +42,8 @@ void enemy_pre_draw(ENEMY* e);
 
 // Draw an enemy
 void enemy_draw(ENEMY* e);
+
+// Enemy-player collision
+void enemy_player_collision(ENEMY* e, PLAYER* p);
 
 #endif // __ENEMY__

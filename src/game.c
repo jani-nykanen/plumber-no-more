@@ -58,6 +58,7 @@ static void game_update() {
     for(i=0; i < ENEMY_COUNT; ++ i) {
 
         enemy_update(&enemies[i]);
+        enemy_player_collision(&enemies[i], &player);
     }
 
     // Update info

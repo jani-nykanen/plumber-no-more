@@ -280,3 +280,26 @@ void enemy_draw(ENEMY* e) {
         e->spr.frame = sprf;
     }
 }
+
+
+// Enemy-player collision
+void enemy_player_collision(ENEMY* e, PLAYER* pl) {
+
+    short px, py, ex, ey;
+
+    short w = 4;
+    short h = 14;
+
+    if(!e->exist) return;
+
+    px = pl->pos.x / 100;
+    py = pl->pos.y / 100;
+
+    ex = e->pos.x / 100;
+    ey = e->pos.y / 100;
+    
+    if(px+8 > ex-w && px-8 < ex+w && py > ey-h && py-16 < ey) {
+
+        pl_kill(pl);
+    }
+}
