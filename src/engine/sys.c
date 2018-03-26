@@ -18,6 +18,7 @@ static const unsigned short FRAME_WAIT = 0;
 // Is running
 static bool isRunning;
 
+
 // Update function
 static void (*fnUpdate)(void) = NULL;
 

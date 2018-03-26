@@ -7,6 +7,7 @@
 #include "player.h"
 #include "info.h"
 #include "coin.h"
+#include "enemy.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -19,10 +20,12 @@
 
 // Object counts
 #define COIN_COUNT 16
+#define ENEMY_COUNT 16
 
 // Game objects
 static PLAYER player;
 static COIN coins[COIN_COUNT];
+static ENEMY enemies[ENEMY_COUNT];
 
 
 // Draw coins
@@ -51,6 +54,12 @@ static void game_update() {
         coin_player_collision(&player, &coins[i]);
     }
 
+    // Update enemies
+    for(i=0; i < ENEMY_COUNT; ++ i) {
+
+        enemy_update(&enemies[i]);
+    }
+
     // Update info
     info_update();
 }
@@ -67,6 +76,12 @@ static void game_pre_draw() {
         coin_pre_draw(&coins[i]);
     }
 
+     // Pre-draw enemies
+    for(; i < ENEMY_COUNT; ++ i) {
+
+        enemy_pre_draw(&enemies[i]);
+    }
+
     // Pre-draw moving objects
     pl_pre_draw(&player);
 }
@@ -74,8 +89,16 @@ static void game_pre_draw() {
 
 // Draw
 static void game_draw() {
+    
+    short i = 0;
 
-    // Draw moving objects
+    // Draw enemies
+    for(; i < ENEMY_COUNT; ++ i) {
+
+        enemy_draw(&enemies[i]);
+    }
+
+    // Draw player
     pl_draw(&player);
 
     // Draw changing info
@@ -101,21 +124,15 @@ static void game_loop() {
 // Initialize
 void game_init() {
 
-    short i = 0;
-
     // Initialize components
     stage_init();
     pl_init();
     info_init();
     coin_init();
+    enemy_init();
 
-    // Reset coins
-    for(; i < COIN_COUNT; ++ i) {
-
-        coins[i].pos = vec2(-1,-1);
-        coins[i].exist = false;
-        coins[i].die = false;
-    }
+    // Reset
+    game_reset();
 
     // Load default map
     stage_load(1);
@@ -153,6 +170,21 @@ void game_add_coin(VEC2 pos) {
 }
 
 
+// Add an enemy
+void game_add_enemy(VEC2 pos, char type) {
+
+    short i = 0;
+    for(; i < ENEMY_COUNT; ++ i) {
+
+        if(!enemies[i].exist) {
+
+            enemy_create(&enemies[i], pos, type);
+            break;
+        }
+    }
+}
+
+
 // Reset game
 void game_reset() {
 
@@ -162,6 +194,11 @@ void game_reset() {
         coins[i].pos = vec2(-1,-1);
         coins[i].exist = false;
         coins[i].die = false;
+    }
+
+    for(i=0; i < ENEMY_COUNT; ++ i) {
+
+        enemies[i].exist = false;
     }
 }
 

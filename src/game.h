@@ -15,6 +15,9 @@ void game_redraw();
 // Add a coin
 void game_add_coin(VEC2 pos);
 
+// Add an enemy
+void game_add_enemy(VEC2 pos, char type);
+
 // Reset game
 void game_reset();
 

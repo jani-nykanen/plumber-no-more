@@ -15,7 +15,7 @@
 static BITMAP* bmpPlayer;
 
 // Constants
-static const short H_SPEED = 60;
+static const short H_SPEED = 80;
 static const short WALL_H_SPEED = 160;
 static const short V_SPEED = 140;
 static const short H_ACC = 6;

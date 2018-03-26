@@ -94,6 +94,14 @@ void stage_load(unsigned short index) {
                     game_add_coin(vec2(x * 16, y * 16 -8 ));
                     break;
 
+                case 98:
+                case 99:
+                case 100:
+                case 101:
+
+                    game_add_enemy(vec2(x * 16 +8, y * 16 -8 +16), t-98);
+                    break;
+
                 default: 
                     break;
                 }
