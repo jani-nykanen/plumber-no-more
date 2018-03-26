@@ -13,11 +13,14 @@
 typedef struct {
 
     VEC2 pos;
+    VEC2 startPos;
     VEC2 speed;
     VEC2 target;
     char type;
     SPRITE spr;
+    short spcTimer;
 
+    bool canJump;
     bool exist;
     bool dir;
 }

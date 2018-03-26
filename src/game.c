@@ -77,7 +77,7 @@ static void game_pre_draw() {
     }
 
      // Pre-draw enemies
-    for(; i < ENEMY_COUNT; ++ i) {
+    for(i=0; i < ENEMY_COUNT; ++ i) {
 
         enemy_pre_draw(&enemies[i]);
     }

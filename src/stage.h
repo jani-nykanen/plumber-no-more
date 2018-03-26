@@ -21,4 +21,7 @@ void stage_draw();
 // Stage-to-player collisions
 void stage_player_collision(PLAYER* pl);
 
+// Get stage data
+char* stage_get_data(short* w, short *h);
+
 #endif // __STAGE__

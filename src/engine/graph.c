@@ -83,19 +83,12 @@ void fill_rect(short dx, short dy, short w, short h, char color) {
 
     char* VGA = (char*)VGA_POS;     
     short y = dy;
-    short x;
     short offset = 320*dy + dx;
 
     // Go through pixels & draw them
     for(y = dy; y < dy + h; ++ y) {
 
-        for(x = dx; x < dx + w; ++ x) {
-
-            // Put pixel
-            VGA[offset ++] = color;
-        }
-
-        offset -= w;
+        memset(VGA + offset, color ,w);
         offset += 320;
     }
 }
@@ -105,48 +98,16 @@ void fill_rect(short dx, short dy, short w, short h, char color) {
 void draw_bitmap(BITMAP* b, short dx, short dy, char flip) {
 
     char* VGA = (char*)VGA_POS; 
-    short x,y;
+    char* bmp = (char*)b->data;
+    short y;
     short offset = 320*dy + dx;
-    short pixel = 0;
-    bool fliph = (flip & FLIP_H) != 0;
-    short pdir = fliph ? -1 : 1;
-    char color;
+    short bmpOff = 0;
 
-     // If horizontal flip, set pixel pointer to the correct
-    // place
-    if(fliph) {
+    for(y=0; y < b->h; ++ y) {
 
-        pixel += b->w-1;
-    }
-
-    // Go through pixels & draw them
-    for(y = dy; y < dy + b->h; ++ y) {
-
-        for(x = dx; x < dx+b->w; ++ x) {
-
-            // Get pixel color
-            color = b->data[pixel];
-            pixel += pdir;
-
-            // If 255 ("transparent"), do not draw
-            if(color == 255) {
-
-                ++ offset;
-                continue;
-            }
-
-            // Put pixel
-            VGA[offset ++] = color;
-        }
-
-        // If horizontal flip, move pixel pointer forward
-        if(fliph) {
-
-            pixel += b->w*2;
-        }
-
-        offset -= b->w;
+        memcpy(VGA + offset, bmp + bmpOff, b->w);
         offset += 320;
+        bmpOff += b->w;
     }
 }
 
@@ -156,56 +117,16 @@ void draw_bitmap_region(BITMAP* b,
     short sx, short sy, short sw, short sh, short dx, short dy, char flip) {
 
     char* VGA = (char*)VGA_POS; 
-    short x,y;
+    char* bmp = (char*)b->data;
+    short y;
     short offset = 320*dy + dx;
-    short pixel = 0;
-    bool fliph = (flip & FLIP_H) != 0;
-    short pdir = fliph ? -1 : 1;
-    char color;
+    short bmpOff = b->w*sy + sx;
 
-    short pjump = b->w - sw;
+    for(y=0; y < sh; ++ y) {
 
-    // Set pixel pointer to the source start position
-    pixel += sy * b->w + sx;
-
-    // If horizontal flip, set pixel pointer to the correct
-    // place
-    if(fliph) {
-
-        pixel += sw-1;
-    }
-
-    // Go through pixels & draw them
-    for(y = dy; y < dy + sh; ++ y) {
-
-        for(x = dx; x < dx+sw; ++ x) {
-
-            // Get pixel color
-            color = b->data[pixel];
-            pixel += pdir;
-
-            // If 255 ("transparent"), do not draw
-            if(color == 255) {
-
-                ++ offset;
-                continue;
-            }
-
-            // Put pixel
-            VGA[offset ++] = color;
-        }
-
-        // Move pixel to the next line
-        pixel += pjump;
-
-        // If horizontal flip, move pixel pointer forward
-        if(fliph) {
-
-            pixel += sw*2;
-        }
-
-        offset -= sw;
+        memcpy(VGA + offset, bmp + bmpOff, sw);
         offset += 320;
+        bmpOff += b->w;
     }
 }
 

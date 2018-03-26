@@ -291,10 +291,25 @@ void pl_pre_draw(PLAYER* pl) {
 // Draw a player
 void pl_draw(PLAYER* pl) {
 
+    short sprf = pl->spr.frame;
+    short sprr = pl->spr.row;
+
     short x = pl->pos.x / 100;
     short y = pl->pos.y / 100;
 
+    if(!pl->dir) {
+
+        pl->spr.frame = 6 -pl->spr.frame;
+        pl->spr.row += 4;
+    }
+
     spr_draw(&pl->spr,bmpPlayer, x-8,y-16, pl->dir ? FLIP_NONE : FLIP_H);
+
+    if(!pl->dir) {
+
+        pl->spr.frame = sprf;
+        pl->spr.row = sprr;
+    }
 }
 
 

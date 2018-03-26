@@ -179,3 +179,12 @@ void stage_player_collision(PLAYER* pl) {
         pl->startPos.y = (calc_start_pos()) * 16 * 100 +800;
     }
 }
+
+
+// Get stage data
+char* stage_get_data(short* w, short *h) {
+
+    *w = width;
+    *h = height;
+    return tiles;
+}
