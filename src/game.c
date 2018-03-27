@@ -13,6 +13,7 @@
 #include "engine/graph.h"
 #include "engine/vector.h"
 #include "engine/bitmap.h"
+#include "engine/input.h"
 
 #include "stdlib.h"
 #include "stdio.h"
@@ -63,6 +64,12 @@ static void game_update() {
 
     // Update info
     info_update();
+
+    // DEBUG
+    if(input_get_button(2) == PRESSED) {
+
+        player.pos.x = (320-7)*100;
+    }
 }
 
 

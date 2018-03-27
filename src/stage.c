@@ -98,6 +98,9 @@ void stage_load(unsigned short index) {
                 case 99:
                 case 100:
                 case 101:
+                case 102:
+                case 103:
+                case 104:
 
                     game_add_enemy(vec2(x * 16 +8, y * 16 -8 +16), t-98);
                     break;

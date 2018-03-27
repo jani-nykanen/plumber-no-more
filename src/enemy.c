@@ -67,6 +67,7 @@ static void move_vertical(ENEMY* e, short speed) {
     if(e->dir == false) {
 
         tile = data[(ey) * w + (ex)];
+        
     }
     // Otherwise get the right tile
     else {
@@ -87,8 +88,8 @@ static void move_vertical(ENEMY* e, short speed) {
 }
 
 
-// Jump behavior
-static void jump(ENEMY* e) {
+// Jump behavior (vertical)
+static void jump_vertical(ENEMY* e) {
 
     const short JUMP_TIME = 60;
 
@@ -121,8 +122,116 @@ static void jump(ENEMY* e) {
 }
 
 
+// Jump behavior (horizontal)
+static void jump_horizontal(ENEMY* e) {
+
+    const short JUMP_TIME = 60;
+
+    e->speed.y = 0;
+    e->target.y = 0;
+
+    if(e->canJump) {
+
+        e->target.x = 0;
+        e->speed.x = 0;
+        
+        if(-- e->spcTimer <= 0) {
+            
+            e->speed.x = -240;
+            e->spcTimer = JUMP_TIME;
+            e->canJump = false;
+        }
+    }
+    else {
+
+        e->target.x = 140;
+        if(e->pos.x >= e->startPos.x) {
+
+            e->pos.x = e->startPos.x;
+            e->canJump = true;
+            e->speed.x = 0;
+            e->target.x = 0;
+        }
+    }
+}
+
+
+// Follow vertical
+// TODO: Merge this with follow_horizontal
+static void follow_vertical(ENEMY* e, short speed) {
+
+    short w,h;
+    short ex = (e->pos.x/100 -8) / 16;
+    short ey = (e->pos.y/100 - 8) / 16;
+    short ty;
+    char tile;
+    char* data = stage_get_data(&w,&h);
+
+    // Get the left tile, if moving that way
+    if(e->speed.y < 0) {
+
+        tile = data[(ey) * w + (ex)];
+        ty = ey +1;
+    }
+    // Otherwise get the right tile
+    else {
+
+        tile = data[ (ey+1) * w + (ex)];
+        ty = ey;
+    }
+
+    // If collision, stop
+    if(tile > 0 && tile < 97){
+
+        e->speed.y = 0;
+        e->pos.y = (ty* 16 + 8) * 100;
+    }
+
+    e->target.y = speed * ( e->plPos.y > e->pos.y ? 1 : -1);
+    e->target.x = 0;
+
+}
+
+
+// Follow horizontal
+static void follow_horizontal(ENEMY* e, short speed) {
+
+    short w,h;
+    short ex = (e->pos.x/100 -8) / 16;
+    short ey = (e->pos.y/100 - 8) / 16;
+    short tx;
+    char tile;
+    char* data = stage_get_data(&w,&h);
+
+    // Get the left tile, if moving that way
+    if(e->speed.x < 0) {
+
+        tile = data[ey * w + (ex)];
+        tx = ex +1;
+    }
+    // Otherwise get the right tile
+    else {
+
+        tile = data[ey * w + (ex +1)];
+        tx = ex;
+    }
+
+    // If collision, stop
+    if(tile > 0 && tile < 97){
+
+        e->speed.x = 0;
+        e->pos.x = (tx* 16 + 8) * 100;
+    }
+
+    e->target.x = speed * ( e->plPos.x > e->pos.x ? 1 : -1);
+    e->target.y = 0;
+
+}
+
+
 // Move axis
 static void enemy_move_axis( short* coord,  short* target, short speed) {
+
     if(*target > *coord) {
 
         *coord += speed ;
@@ -145,10 +254,8 @@ static void enemy_move_axis( short* coord,  short* target, short speed) {
 // Move an enemy
 static void enemy_move(ENEMY* e) {
 
-    const short ACC = 6;
-
-    enemy_move_axis( &e->speed.x, &e->target.x, ACC);
-    enemy_move_axis( &e->speed.y, &e->target.y, ACC);
+    enemy_move_axis( &e->speed.x, &e->target.x, e->acc);
+    enemy_move_axis( &e->speed.y, &e->target.y, e->acc);
     e->pos.x += e->speed.x;
     e->pos.y += e->speed.y;
 
@@ -158,11 +265,15 @@ static void enemy_move(ENEMY* e) {
 // Animate
 static void enemy_animate(ENEMY* e) {
 
-    if(e->type != 3) {
+    short s;
+
+    if(e->type < 3) {
 
         spr_animate(&e->spr, e->type, 0,3, 6);
     }
-    else {
+    else if(e->type == 3 || e->type == 4){
+
+        s = e->type == 3 ? e->speed.y : e->speed.x;
 
         e->spr.row = e->type;
 
@@ -172,8 +283,12 @@ static void enemy_animate(ENEMY* e) {
         }
         else {
 
-            e->spr.frame = e->speed.y < 0 ? 1 : 2;
+            e->spr.frame = s < 0 ? 1 : 2;
         }
+    }
+    else if(e->type == 5 || e->type == 6) {
+
+        spr_animate(&e->spr, e->type,0,2,5);
     }
 }
 
@@ -204,6 +319,16 @@ void enemy_create(ENEMY* e, VEC2 pos, char type) {
     e->dir = false;
     e->exist = true;
     e->canJump = true;
+
+    // Set accuration
+    if(e->type < 5) {
+
+        e->acc = 6;
+    }
+    else {
+
+        e->acc = 1;
+    }
 }
 
 
@@ -228,7 +353,22 @@ void enemy_update(ENEMY* e) {
 
         case 3:
 
-            jump(e);
+            jump_vertical(e);
+            break;
+
+        case 4:
+
+            jump_horizontal(e);
+            break;
+
+        case 5:
+
+            follow_vertical(e,60);
+            break;
+
+        case 6:
+
+            follow_horizontal(e,60);
             break;
 
         default:
@@ -292,13 +432,15 @@ void enemy_player_collision(ENEMY* e, PLAYER* pl) {
 
     if(!e->exist) return;
 
+    e->plPos = pl->pos;
+
     px = pl->pos.x / 100;
     py = pl->pos.y / 100;
 
     ex = e->pos.x / 100;
     ey = e->pos.y / 100;
     
-    if(px+8 > ex-w && px-8 < ex+w && py > ey-h && py-16 < ey) {
+    if(px+8 > ex-w && px-8 < ex+w && py > ey-h && py-16 < ey-(16-h)) {
 
         pl_kill(pl);
     }

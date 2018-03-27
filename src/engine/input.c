@@ -27,7 +27,7 @@ static void far interrupt (*oldHandler)(void);
 static VEC2 stick;
 // Button key codes
 static const short buttons[] = {
-    44, 28
+    45, 44, 25
 };
 
 
@@ -49,6 +49,7 @@ static void far interrupt handler() {
         if (scancode < 0x60) {
 
             extKeys[scancode] = make_break;
+
         }
         buffer = 0;
 

@@ -49,6 +49,11 @@ static void pl_control(PLAYER* pl) {
         pl->target.x = -H_SPEED;
     }
 
+    if(input_get_button(1) == DOWN) {
+
+        pl->target.x *= 2;
+    }
+
     // Jumping
     fire = input_get_button(BUTTON_FIRE);
     if(fire == PRESSED) {
@@ -468,4 +473,7 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
 
     // Top ceiling collision
     pl_ceiling_collision(pl,0,10,320, false);
+
+    // Bottom death collision
+    pl_floor_collision(pl, 0, 200, 320 ,true);
 }

@@ -8,6 +8,9 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+// Constants
+static const unsigned short MINUTES = 2;
+
 // Bitmaps
 static BITMAP* bmpFont;
 
@@ -70,7 +73,7 @@ void info_init() {
     bmpFont = load_bitmap("ASSETS/BITMAPS/FONT.BIN");
 
     // Set time
-    time = 60 * 60 * 5;
+    time = 60 * 60 * MINUTES;
 
     // Set default values
     livesChanged = true;
