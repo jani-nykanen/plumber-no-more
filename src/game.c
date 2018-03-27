@@ -8,6 +8,7 @@
 #include "info.h"
 #include "coin.h"
 #include "enemy.h"
+#include "boss.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -27,6 +28,7 @@
 static PLAYER player;
 static COIN coins[COIN_COUNT];
 static ENEMY enemies[ENEMY_COUNT];
+static BOSS boss;
 
 
 // Draw coins
@@ -62,6 +64,9 @@ static void game_update() {
         enemy_player_collision(&enemies[i], &player);
     }
 
+    // Update boss
+    boss_update(&boss, &player);
+
     // Update info
     info_update();
 
@@ -90,6 +95,9 @@ static void game_pre_draw() {
         enemy_pre_draw(&enemies[i]);
     }
 
+    // Pre-draw boss
+    boss_pre_draw(&boss);
+
     // Pre-draw moving objects
     pl_pre_draw(&player);
 }
@@ -105,6 +113,9 @@ static void game_draw() {
 
         enemy_draw(&enemies[i]);
     }
+
+    // Draw boss
+    boss_draw(&boss);
 
     // Draw player
     pl_draw(&player);
@@ -138,6 +149,7 @@ void game_init() {
     info_init();
     coin_init();
     enemy_init();
+    boss_init();
 
     // Reset
     game_reset();
@@ -193,10 +205,19 @@ void game_add_enemy(VEC2 pos, char type) {
 }
 
 
+// Add the boss to the screen
+void game_add_boss(VEC2 pos) {
+
+    boss_create(&boss, pos);
+}
+
+
 // Reset game
 void game_reset() {
 
     short i = 0;
+    
+    // Destroy coins
     for(; i < COIN_COUNT; ++ i) {
 
         coins[i].pos = vec2(-1,-1);
@@ -204,10 +225,14 @@ void game_reset() {
         coins[i].die = false;
     }
 
+    // Destroy enemies
     for(i=0; i < ENEMY_COUNT; ++ i) {
 
         enemies[i].exist = false;
     }
+
+    // Destroy boss
+    boss.exist = false;
 }
 
 

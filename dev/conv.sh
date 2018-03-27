@@ -15,6 +15,7 @@ cd "$(dirname "$0")"
 ../tools/tmx2bin maps/11.tmx ../ASSETS/MAPS/11.BIN
 ../tools/tmx2bin maps/12.tmx ../ASSETS/MAPS/12.BIN
 ../tools/tmx2bin maps/13.tmx ../ASSETS/MAPS/13.BIN
+../tools/tmx2bin maps/14.tmx ../ASSETS/MAPS/14.BIN
 
 # Bitmaps
 ../tools/png2bin bitmaps/player.png ../ASSETS/BITMAPS/PLAYER.BIN

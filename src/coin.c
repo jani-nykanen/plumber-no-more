@@ -51,7 +51,7 @@ void coin_player_collision(PLAYER* pl, COIN* c) {
     if(!c->exist) return;
 
     if(px+8 > c->pos.x-4 && px-8 < c->pos.x+12 &&
-       py > c->pos.y-4 && py-16 < c->pos.y+12) {
+       py > c->pos.y-2 && py-16 < c->pos.y+14) {
 
          c->die = true;
          c->exist = false;

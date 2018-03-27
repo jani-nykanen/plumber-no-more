@@ -105,6 +105,11 @@ void stage_load(unsigned short index) {
                     game_add_enemy(vec2(x * 16 +8, y * 16 -8 +16), t-98);
                     break;
 
+                case 105:
+
+                    game_add_boss(vec2(x * 16 +8, y * 16 -8 +16));
+                    break;
+
                 default: 
                     break;
                 }
