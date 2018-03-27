@@ -25,6 +25,8 @@ static unsigned char coins;
 static bool livesChanged;
 // Coins changed
 static bool coinsChanged;
+// Time changed
+static bool timeChanged;
 
 
 // Get time string
@@ -37,6 +39,8 @@ static void get_time_string(char* buf) {
         snprintf(buf, 64, "%d:%d", minutes, seconds);
     else
         snprintf(buf, 64, "%d:0%d", minutes, seconds);
+
+    timeChanged = false;
 }
 
 
@@ -86,7 +90,19 @@ void info_init() {
 // Update info
 void info_update() {
 
+    // Get old seconds
+    short seconds1 = (time/ 60) % 60;
+    short seconds2;
+
     -- time;
+
+    // Get new seconds
+    seconds1 = (time/ 60) % 60;
+
+    if(seconds1 != seconds2) {
+
+        timeChanged = true;
+    }
 }
 
 
@@ -108,8 +124,11 @@ void info_draw() {
     char str[64];
 
     // Draw time
-    get_time_string(str);
-    draw_text(bmpFont, str, 160,12,0,0, true);
+    if(timeChanged) {
+
+        get_time_string(str);
+        draw_text(bmpFont, str, 160,12,0,0, true);
+    }
 
     // Draw lives
     if(livesChanged) {

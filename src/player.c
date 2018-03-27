@@ -472,7 +472,7 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
     }
 
     // Top ceiling collision
-    pl_ceiling_collision(pl,0,10,320, false);
+    pl_ceiling_collision(pl,0,20,320, false);
 
     // Bottom death collision
     pl_floor_collision(pl, 0, 200, 320 ,true);
