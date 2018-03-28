@@ -6,6 +6,7 @@
 #include "info.h"
 #include "game.h"
 #include "stage.h"
+#include "transition.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -63,7 +64,7 @@ static void pause_update() {
         }
         else {
 
-            sys_terminate();
+            start_transition(sys_terminate);
         }
     }
 }

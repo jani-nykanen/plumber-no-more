@@ -4,6 +4,7 @@
 #include "player.h"
 
 #include "info.h"
+#include "stage.h"
 
 #include "engine/graph.h"
 #include "engine/input.h"
@@ -223,6 +224,19 @@ static void pl_respawn_anim(PLAYER* pl) {
 }
 
 
+// Celebrate
+static void pl_celebrate(PLAYER* pl) {
+
+    pl->target.y = V_SPEED;
+    pl->target.x = 0.0;
+    pl->speed.x = 0;
+
+    pl->dir = true;
+    spr_animate(&pl->spr, 8,0,3,10);
+
+}
+
+
 // Initialize global player components
 void pl_init() {
 
@@ -250,6 +264,7 @@ PLAYER pl_create(VEC2 p) {
     pl.wallSlideTimer = 0;
     pl.dying = false;
     pl.respawning = true;
+    pl.victorious = false;
 
     return pl;
 
@@ -259,6 +274,22 @@ PLAYER pl_create(VEC2 p) {
 // Update a player
 void pl_update(PLAYER* pl) {
 
+    // If victorious
+    if(pl->victorious) {
+
+        pl_celebrate(pl);
+        pl_move(pl);
+        return;
+    }
+    else if(stage_is_final()) {
+
+        if(pl->pos.x/100+8 > 10*16 && pl->pos.y/100 > 6*16) {
+
+            pl->victorious = true;
+            return;
+        }
+    }
+
     // If respawning
     if(pl->respawning) {
 
@@ -266,7 +297,7 @@ void pl_update(PLAYER* pl) {
         return;
     }
 
-    // Time to die (if it's time to die, though)
+    // Time to die (if it's time to die, of course)
     if(pl->dying) {
 
         pl_die(pl);
@@ -340,6 +371,12 @@ void pl_floor_collision(PLAYER* pl, short x, short y, short w, bool fatal) {
 
         pl->speed.y = 0;
         pl->pos.y = y * 100;
+
+        if(pl->victorious) {
+
+            pl->speed.y = -150;
+        }
+        
 
         pl->canJump = true;
         pl->doubleJump = false;

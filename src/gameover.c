@@ -7,6 +7,7 @@
 #include "stage.h"
 #include "info.h"
 #include "transition.h"
+#include "ending.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -25,7 +26,8 @@ static short timer;
 static char goverMode;
 
 // Constants
-static const short TIMER_MAX = 120;
+static const short TIMER_MAX1 = 120;
+static const short TIMER_MAX2 = 240;
 
 
 // Reset
@@ -41,9 +43,9 @@ static void gover_loop() {
 
     short t;
 
-    if(++ timer > TIMER_MAX) {
+    if(++ timer > ( (goverMode == 2) ? TIMER_MAX2 : TIMER_MAX1)) {
 
-        start_transition(reset);
+        start_transition(goverMode == 2 ? play_ending : reset);
     }
 
     // Draw Game over! text

@@ -10,6 +10,7 @@
 #include "enemy.h"
 #include "boss.h"
 #include "pause.h"
+#include "gameover.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -34,6 +35,9 @@ static BOSS boss;
 // Scene terminated
 static bool sceneTerminated;
 
+// Victory timer
+static short victoryTimer;
+
 
 // Draw coins
 static void draw_coins() {
@@ -51,9 +55,28 @@ static void game_update() {
 
     short i = 0;
 
+    // Pause, if enter pressed
+    if(input_get_button(3) == PRESSED) {
+
+        sceneTerminated = true;
+        pause_game();
+        return;
+    }
+
     // Update player
     pl_update(&player);
     stage_player_collision(&player);
+
+    // If victory
+    if(player.victorious) {
+
+        if(++ victoryTimer >= 180) {
+
+            game_over(2);
+        }
+
+        return;
+    }
 
     // Update coins
     for(; i < COIN_COUNT; ++ i) {
@@ -73,14 +96,6 @@ static void game_update() {
 
     // Update info
     info_update();
-
-    // Pause, if enter pressed
-    if(input_get_button(3) == PRESSED) {
-
-        sceneTerminated = true;
-        pause_game();
-        return;
-    }
 
     // DEBUG
     if(input_get_button(2) == PRESSED) {

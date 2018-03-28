@@ -35,4 +35,7 @@ void info_reset();
 // Is the game over
 bool info_game_over();
 
+// Get time (no the remaining, but the total time spent)
+unsigned short info_get_time();
+
 #endif // __INFO__

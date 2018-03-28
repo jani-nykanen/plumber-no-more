@@ -24,6 +24,7 @@ typedef struct {
     bool dir;
     bool canJump;
     bool doubleJump;
+    bool victorious;
     short wallSlideTimer;
     bool touchWall;
     bool wallDir;

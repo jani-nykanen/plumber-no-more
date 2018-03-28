@@ -29,4 +29,7 @@ char* stage_get_data(short* w, short *h);
 // Draw the stage "by parts"
 void stage_draw_by_parts();
 
+// Is the stage the final stage
+bool stage_is_final();
+
 #endif // __STAGE__

@@ -213,3 +213,10 @@ bool info_game_over() {
 
     return gameOver;
 }
+
+
+// Get time (no the remaining, but the total time spent)
+unsigned short info_get_time() {
+
+    return 60 * 60 * MINUTES - time;
+}

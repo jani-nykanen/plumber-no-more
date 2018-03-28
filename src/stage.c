@@ -264,3 +264,10 @@ void stage_draw_by_parts() {
     
     set_update_func(draw_by_parts_loop);
 }
+
+
+// Is the stage the final stage
+bool stage_is_final() {
+
+    return (mapIndex == 13);
+}
