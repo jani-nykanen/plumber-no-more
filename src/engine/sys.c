@@ -12,9 +12,6 @@
 #include "stdlib.h"
 #include "stdbool.h"
 
-// Frame wait
-static const unsigned short FRAME_WAIT = 0;
-
 // Is running
 static bool isRunning;
 
@@ -50,9 +47,6 @@ void sys_loop() {
             fnUpdate();
 
         input_update();
-
-        delay(FRAME_WAIT);
-
     }
 
 }
@@ -61,5 +55,7 @@ void sys_loop() {
 // Terminate
 void sys_terminate() {
 
+    clear(0);
+    input_destroy();
     isRunning = false;
 }

@@ -4,6 +4,10 @@
 #ifndef __INFO__
 #define __INFO__
 
+#include "engine/bitmap.h"
+
+#include "stdbool.h"
+
 // Initialize info
 void info_init();
 
@@ -21,5 +25,14 @@ char info_reduce_life();
 
 // Add a coin
 void info_add_coin();
+
+// Get font (so we don't have to load it multiple times)
+BITMAP* info_get_font();
+
+// Reset info
+void info_reset();
+
+// Is the game over
+bool info_game_over();
 
 #endif // __INFO__

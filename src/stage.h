@@ -6,11 +6,13 @@
 
 #include "player.h"
 
+#include "stdbool.h"
+
 // Initialize stage
 void stage_init();
 
 // Load stage
-void stage_load(unsigned short index);
+void stage_load(unsigned short index, bool redraw);
 
 // Load next stage
 void stage_load_next();
@@ -23,5 +25,8 @@ void stage_player_collision(PLAYER* pl);
 
 // Get stage data
 char* stage_get_data(short* w, short *h);
+
+// Draw the stage "by parts"
+void stage_draw_by_parts();
 
 #endif // __STAGE__

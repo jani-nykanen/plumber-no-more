@@ -38,7 +38,16 @@ static void boss_move(BOSS* b, PLAYER* pl) {
 
     // Set target
     b->target.y = 140;
-    b->target.x = 200 * (pl->pos.x < b->pos.x ? -1 : 1);
+
+    if(pl->pos.x/100 - 8 >= 48) {
+
+        b->target.x = 200 * (pl->pos.x < b->pos.x ? -1 : 1);
+    }
+    else {
+        
+        b->target.x = 200 * (160*100 < b->pos.x ? -1 : 1);
+    }
+    
 
     // Update axes
     boss_move_axis(&b->speed.x, &b->target.x, 4);

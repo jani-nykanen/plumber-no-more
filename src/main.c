@@ -8,8 +8,7 @@
 #include "engine/input.h"
 
 #include "game.h"
-
-#include <conio.h>
+#include "pause.h"
 
 
 // Main
@@ -20,6 +19,7 @@ void main() {
     sys_init();
     input_init();
     game_init();
+    pause_init();
 
     // Set scene & loop
     start_game_scene();

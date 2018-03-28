@@ -24,6 +24,9 @@ void game_add_boss(VEC2 pos);
 // Reset game
 void game_reset();
 
+// Hard-reset the game
+void game_hard_reset();
+
 // Start game scene
 void start_game_scene();
 

@@ -3,13 +3,15 @@
 
 #include "info.h"
 
+#include "gameover.h"
+
 #include "engine/graph.h"
 
 #include "stdlib.h"
 #include "stdio.h"
 
 // Constants
-static const unsigned short MINUTES = 2;
+static const unsigned short MINUTES = 4;
 
 // Bitmaps
 static BITMAP* bmpFont;
@@ -27,6 +29,8 @@ static bool livesChanged;
 static bool coinsChanged;
 // Time changed
 static bool timeChanged;
+// Game over
+static bool gameOver;
 
 
 // Get time string
@@ -76,14 +80,8 @@ void info_init() {
     // Load bitmaps
     bmpFont = load_bitmap("ASSETS/BITMAPS/FONT.BIN");
 
-    // Set time
-    time = 60 * 60 * MINUTES;
-
-    // Set default values
-    livesChanged = true;
-    coinsChanged = true;
-    lives = 10;
-    coins = 0;
+    // Reset
+    info_reset();
 }
 
 
@@ -94,10 +92,19 @@ void info_update() {
     short seconds1 = (time/ 60) % 60;
     short seconds2;
 
-    -- time;
+    // Update time
+    if(time > 0) {
+        -- time;
+
+        if(time == 0) {
+
+            gameOver = true;
+            game_over(1);
+        }
+    }
 
     // Get new seconds
-    seconds1 = (time/ 60) % 60;
+    seconds2 = (time/ 60) % 60;
 
     if(seconds1 != seconds2) {
 
@@ -154,6 +161,12 @@ char info_reduce_life() {
 
         livesChanged = true;
         -- lives;
+    
+        if(lives == 0) {
+
+            gameOver = true;
+            game_over(0);
+        }
     }
 
     return lives;
@@ -163,12 +176,40 @@ char info_reduce_life() {
 // Add a coin
 void info_add_coin() {
 
-    ++ coins;
-    if(coins == 10) {
+    if(++ coins == 10) {
 
         coins = 0;
         ++ lives;
         livesChanged = true;
     }
     coinsChanged = true;
+}
+
+
+// Get font
+BITMAP* info_get_font() {
+
+    return bmpFont;
+}
+
+
+// Reset info
+void info_reset() {
+
+    // Set time
+    time = 60 * 60 * MINUTES;
+
+    // Set default values
+    livesChanged = true;
+    coinsChanged = true;
+    gameOver = false;
+    lives = 10;
+    coins = 0;
+}
+
+
+// Is the game over
+bool info_game_over() {
+
+    return gameOver;
 }

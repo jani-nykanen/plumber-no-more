@@ -9,6 +9,7 @@
 #include "coin.h"
 #include "enemy.h"
 #include "boss.h"
+#include "pause.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -29,6 +30,9 @@ static PLAYER player;
 static COIN coins[COIN_COUNT];
 static ENEMY enemies[ENEMY_COUNT];
 static BOSS boss;
+
+// Scene terminated
+static bool sceneTerminated;
 
 
 // Draw coins
@@ -69,6 +73,14 @@ static void game_update() {
 
     // Update info
     info_update();
+
+    // Pause, if enter pressed
+    if(input_get_button(3) == PRESSED) {
+
+        sceneTerminated = true;
+        pause_game();
+        return;
+    }
 
     // DEBUG
     if(input_get_button(2) == PRESSED) {
@@ -133,6 +145,11 @@ static void game_loop() {
 
     // Update
     game_update();
+    if(sceneTerminated || info_game_over() ) {
+
+        sceneTerminated = false;
+        return;
+    }
     
     // Post-draw
     game_draw();
@@ -155,13 +172,16 @@ void game_init() {
     game_reset();
 
     // Load default map
-    stage_load(1);
+    stage_load(1, true);
 
     // Redraw
     game_redraw();
 
     // Create objects
     player = pl_create(vec2(6*16 +8, 10*16 +8));
+
+    // Set default values
+    sceneTerminated = false;
 
 }
 
@@ -233,6 +253,18 @@ void game_reset() {
 
     // Destroy boss
     boss.exist = false;
+}
+
+
+// Hard-reset the game
+void game_hard_reset() {
+
+    clear(0);
+    game_reset();
+    stage_load(1, false);
+    player = pl_create(vec2(6*16 +8, 10*16 +8));
+
+    stage_draw_by_parts(); 
 }
 
 

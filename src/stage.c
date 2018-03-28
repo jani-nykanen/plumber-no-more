@@ -4,7 +4,9 @@
 #include "stage.h"
 
 #include "game.h"
+#include "info.h"
 
+#include "engine/sys.h"
 #include "engine/bitmap.h"
 #include "engine/graph.h"
 
@@ -54,7 +56,7 @@ void stage_init() {
 
 
 // Load stage
-void stage_load(unsigned short index) {
+void stage_load(unsigned short index, bool redraw) {
 
     short t = 0;
     short x,y;
@@ -123,14 +125,15 @@ void stage_load(unsigned short index) {
     fclose(f);
 
     // Draw
-    stage_draw();
+    if(redraw)
+        stage_draw();
 }
 
 
 // Load next stage
 void stage_load_next() {
 
-    stage_load(++ mapIndex);
+    stage_load(++ mapIndex, true);
 }
 
 
@@ -195,4 +198,69 @@ char* stage_get_data(short* w, short *h) {
     *w = width;
     *h = height;
     return tiles;
+}
+
+
+// ------------------------------- //
+
+
+// Timer
+static short timer;
+
+// Tile pos
+static short tilePos;
+
+
+// Draw stage
+static void stage_draw_column(short x) {
+
+    short y;
+    short sx, sy;
+    char tile;
+
+    for(y = 0; y < height; ++ y) {
+
+        tile = tiles[y * width +x];
+        if(tile -- == 0)
+            continue;
+
+        sx = ( (short)tile) % 16;
+        sy = ( (short)tile) / 16;
+
+        draw_bitmap_region(bmpTiles, sx*16,sy*16,16,16, x*16,y*16-8, FLIP_NONE);
+    }
+
+}
+
+
+// Draw by parts loop
+static void draw_by_parts_loop() {
+
+    if(++ timer >= 4) {
+
+        if(tilePos -- <= 0) {
+
+            info_reset();
+            game_redraw();
+            start_game_scene();
+            return;
+        }
+
+        stage_draw_column(tilePos);
+        stage_draw_column(width-1 - tilePos);
+
+        timer = 0;
+        
+    }
+}
+
+
+// Draw the stage "by parts"
+void stage_draw_by_parts() {
+
+    clear(0);
+    timer = 0;
+    tilePos = width / 2;
+    
+    set_update_func(draw_by_parts_loop);
 }

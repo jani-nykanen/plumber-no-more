@@ -27,7 +27,7 @@ static void far interrupt (*oldHandler)(void);
 static VEC2 stick;
 // Button key codes
 static const short buttons[] = {
-    45, 44, 25
+    45, 44, 25, 28
 };
 
 
