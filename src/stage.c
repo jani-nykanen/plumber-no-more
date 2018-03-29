@@ -12,16 +12,20 @@
 
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
 // Map size (in tiles)
 #define MAP_SIZE 260
 
 // Stage tile data
 static char tiles[MAP_SIZE];
+// Stage old data
+static char oldTiles[MAP_SIZE];
 
-// Map width (unneeded)
+// These could actually be constants as well...)
+// Map width
 static short width;
-// Map height (unneeded)
+// Map height
 static short height;
 
 // Map index
@@ -177,10 +181,10 @@ void stage_player_collision(PLAYER* pl) {
         game_reset();
 
         // Load next
-        stage_load_next();
+        stage_move_to_next();
 
         // Redraw game
-        game_redraw();
+        // game_redraw();
 
         // Move player back to left side
         pl->pos.x = 800 + ( pl->pos.x - (320-8)*100);
@@ -212,7 +216,7 @@ static short tilePos;
 
 
 // Draw stage
-static void stage_draw_column(short x) {
+static void stage_draw_column(short x, short dx, char* data, bool renderEmpty) {
 
     short y;
     short sx, sy;
@@ -220,14 +224,20 @@ static void stage_draw_column(short x) {
 
     for(y = 0; y < height; ++ y) {
 
-        tile = tiles[y * width +x];
-        if(tile -- == 0)
+        tile = data[y * width +x];
+        if(tile >= 97 || tile -- == 0) {
+
+            if(renderEmpty)
+                fill_rect(dx*16, y*16-8, 16,16, 0);
+
             continue;
+        }
+            
 
         sx = ( (short)tile) % 16;
         sy = ( (short)tile) / 16;
 
-        draw_bitmap_region(bmpTiles, sx*16,sy*16,16,16, x*16,y*16-8, FLIP_NONE);
+        draw_bitmap_region(bmpTiles, sx*16,sy*16,16,16, dx*16,y*16-8, FLIP_NONE);
     }
 
 }
@@ -246,8 +256,8 @@ static void draw_by_parts_loop() {
             return;
         }
 
-        stage_draw_column(tilePos);
-        stage_draw_column(width-1 - tilePos);
+        stage_draw_column(tilePos,tilePos, tiles, false);
+        stage_draw_column(width-1 - tilePos,width-1 - tilePos, tiles, false);
 
         timer = 0;
         
@@ -270,4 +280,52 @@ void stage_draw_by_parts() {
 bool stage_is_final() {
 
     return (mapIndex == 13);
+}
+
+
+// ------------------------------ //
+
+// Column pointer
+static short columnPointer;
+
+
+// Transition
+static void stage_transition() {
+
+    short x = 0;
+    short p = columnPointer;
+
+    // clear(0);
+
+    // Draw old map
+    for(x=0; x < 20 - columnPointer; ++ x, ++ p) {
+
+        stage_draw_column(p, x, oldTiles, true);
+    }
+
+    // Draw new map
+    p = 0;
+    for(x=20 - columnPointer; x < 20; ++ x, ++ p) {
+
+        stage_draw_column(p, x, tiles, true);
+    }
+
+    if(++ columnPointer == 21) {
+
+        start_game_scene();
+        stage_draw();
+        game_redraw();
+    }
+    
+}
+
+
+// Move to the next stage
+void stage_move_to_next() {
+
+    memcpy(oldTiles, tiles, MAP_SIZE);
+    stage_load(++ mapIndex, false);
+
+    columnPointer = 0;
+    set_update_func(stage_transition);
 }

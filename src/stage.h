@@ -32,4 +32,7 @@ void stage_draw_by_parts();
 // Is the stage the final stage
 bool stage_is_final();
 
+// Move to the next stage
+void stage_move_to_next();
+
 #endif // __STAGE__

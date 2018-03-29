@@ -207,6 +207,12 @@ static void loop_intro() {
     // Draw "created by"
     draw_bitmap_region(bmpCreator, 0,64 + (t-1)*24,96,24, 160-48,104, FLIP_NONE);
 
+    // DEBUG
+    if(input_get_button(2) == PRESSED) {
+
+        go_to_game();
+    }
+
 }
 
 
