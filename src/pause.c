@@ -57,7 +57,7 @@ static void pause_update() {
     else if(stick.y < 0 && delta.y < 0) {
 
         if(cursorPos -- == 0)
-            cursorPos = 3;
+            cursorPos = 2;
     }
 
     // Enter pressed
