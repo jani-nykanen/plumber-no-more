@@ -25,6 +25,10 @@ static void far interrupt (*oldHandler)(void);
 
 // "Analogue stick"
 static VEC2 stick;
+// Stick delta
+static VEC2 delta;
+// Old stick
+static VEC2 oldStick;
 // Button key codes
 static const short buttons[] = {
     45, 44, 25, 28
@@ -113,6 +117,8 @@ void input_init() {
 // Update
 void input_update() {
 
+    oldStick = stick;
+
     // Update stick
     stick.x = 0;
     stick.y = 0;
@@ -127,6 +133,9 @@ void input_update() {
     else if(extKeys[80] == 1)
         stick.y = 1;     
 
+    delta.x = stick.x - oldStick.x;
+    delta.y = stick.y - oldStick.y;
+
 }
 
 
@@ -135,6 +144,14 @@ VEC2 input_get_stick() {
 
     return stick;
 }
+
+
+// Get stick delta
+VEC2 input_get_stick_delta() {
+
+    return delta;
+}
+
 
 // Get button
 char input_get_button(short id) {

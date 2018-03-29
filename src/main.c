@@ -9,6 +9,7 @@
 
 #include "game.h"
 #include "pause.h"
+#include "title.h"
 
 
 // Main
@@ -18,11 +19,11 @@ void main() {
     init_graph();
     sys_init();
     input_init();
-    game_init();
     pause_init();
 
     // Set scene & loop
-    start_game_scene();
+    // start_game_scene();
+    play_intro();
     sys_loop();
 
     // Destroy

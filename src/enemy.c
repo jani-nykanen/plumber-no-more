@@ -103,14 +103,14 @@ static void jump_vertical(ENEMY* e) {
         
         if(++ e->spcTimer >= JUMP_TIME) {
             
-            e->speed.y = -320;
+            e->speed.y = -360;
             e->spcTimer = 0;
             e->canJump = false;
         }
     }
     else {
 
-        e->target.y = 300;
+        e->target.y = 360;
         if(e->pos.y + e->speed.y >= e->startPos.y) {
 
             e->pos.y = e->startPos.y;
@@ -137,14 +137,14 @@ static void jump_horizontal(ENEMY* e) {
         
         if(-- e->spcTimer <= 0) {
             
-            e->speed.x = -360;
+            e->speed.x = -400;
             e->spcTimer = JUMP_TIME;
             e->canJump = false;
         }
     }
     else {
 
-        e->target.x = 300;
+        e->target.x = 360;
         if(e->pos.x + e->speed.x >= e->startPos.x) {
 
             e->pos.x = e->startPos.x;
@@ -327,11 +327,11 @@ void enemy_create(ENEMY* e, VEC2 pos, char type) {
     }
     else if(e->type == 3 || e->type == 4) {
 
-        e->acc = 16;
+        e->acc = 20;
     }
     else {
 
-        e->acc = 2;
+        e->acc = 3;
     }
 }
 
@@ -347,12 +347,12 @@ void enemy_update(ENEMY* e) {
         case 0:
         case 1:
 
-            move_horizontal(e, e->type == 0 ? 90 : 70, e->type == 0);
+            move_horizontal(e, e->type == 0 ? 100 : 85, e->type == 0);
             break;
 
         case 2:
 
-            move_vertical(e,70);
+            move_vertical(e,85);
             break;
 
         case 3:

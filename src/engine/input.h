@@ -30,6 +30,9 @@ void input_update();
 // Get "analogue stick"
 VEC2 input_get_stick();
 
+// Get stick delta
+VEC2 input_get_stick_delta();
+
 // Get button
 char input_get_button(short id);
 

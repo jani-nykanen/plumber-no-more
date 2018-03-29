@@ -22,10 +22,10 @@ static BITMAP* bmpCursor;
 
 // Constants
 static const short WIDTH = 80;
-static const short HEIGHT = 28;
+static const short HEIGHT = 40;
 
 // Cursor position
-static bool cursorPos;
+static char cursorPos;
 
 
 // Draw box
@@ -37,7 +37,8 @@ static void pause_draw_box() {
 
     // Text
     draw_text(bmpFont, "RESUME", 160-WIDTH/2+22, 100-HEIGHT/2+4, 0,0, false);
-    draw_text(bmpFont, "QUIT", 160-WIDTH/2+22, 100-HEIGHT/2+16, 0,0, false);
+    draw_text(bmpFont, "RESTART", 160-WIDTH/2+22, 100-HEIGHT/2+16, 0,0, false);
+    draw_text(bmpFont, "QUIT", 160-WIDTH/2+22, 100-HEIGHT/2+28, 0,0, false);
 }
 
 
@@ -45,24 +46,35 @@ static void pause_draw_box() {
 static void pause_update() {
 
     VEC2 stick = input_get_stick();
+    VEC2 delta = input_get_stick_delta();
 
     // Move cursor
-    if( (stick.y > 0 && !cursorPos) || (stick.y < 0 && cursorPos)) {
+    if(stick.y > 0 && delta.y > 0) {
 
-        cursorPos = !cursorPos;
+        ++ cursorPos;
+        cursorPos %= 3;
+    }
+    else if(stick.y < 0 && delta.y < 0) {
+
+        if(cursorPos -- == 0)
+            cursorPos = 3;
     }
 
     // Enter pressed
     if(input_get_button(3) == PRESSED) {
 
-        if(!cursorPos) {
+        if(cursorPos == 0) {
 
             clear(0);
             game_redraw();
             stage_draw();
             start_game_scene();
         }
-        else {
+        else if(cursorPos == 1) {
+
+            start_transition(game_hard_reset);
+        }
+        else if(cursorPos == 2) {
 
             start_transition(sys_terminate);
         }
@@ -74,8 +86,8 @@ static void pause_update() {
 static void pause_draw() {
 
     // Draw cursor
-    short cpos = cursorPos ? 12 : 0;
-    fill_rect(160-WIDTH/2+4, 100-HEIGHT/2+2,16,24, 0);
+    short cpos = cursorPos * 12;
+    fill_rect(160-WIDTH/2+4, 100-HEIGHT/2+2,16,36, 0);
     draw_bitmap(bmpCursor, 160-WIDTH/2+4, 100-HEIGHT/2+2 +cpos, FLIP_NONE);
 }
 
@@ -94,7 +106,7 @@ void pause_game() {
 
     // Set values
     bmpFont = info_get_font();
-    cursorPos = false;
+    cursorPos = 0;
 
     // Draw static
     pause_draw_box();

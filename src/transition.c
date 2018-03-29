@@ -19,23 +19,28 @@ static short pos;
 // Loop
 static void trn_loop() {
 
+    short p;
+    
     if( (pos += 3) >= 160) {
 
-        // We do not have to make checks if fnFinished is NULL,
-        // because THAT SHOULD NOT HAPPEN!
-        fnFinished();
+        if(fnFinished != NULL)
+            fnFinished();
+
         return;
     }
 
+    p = pos / 4;
+    p *= 4;
+
     // Draw horizontal
-    fill_rect(0,0,pos,200, 0);
-    fill_rect(320-pos,0,pos,200, 0);
+    fill_rect(0,0,p,200, 0);
+    fill_rect(320-p,0,p,200, 0);
 
     // Draw vertical
     if(pos > 60) {
 
-        fill_rect(pos,0,320-pos,pos-60, 0);
-        fill_rect(pos,200 - (pos-60),320-pos,pos-60, 0);
+        fill_rect(p,0,320-p,p-60, 0);
+        fill_rect(p,200 - (p-60),320-p,p-60, 0);
     }
 
 }

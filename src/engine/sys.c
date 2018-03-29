@@ -4,6 +4,7 @@
 #include "sys.h"
 
 #include "input.h"
+#include "graph.h"
 
 #include <dos.h>
 #include <conio.h>

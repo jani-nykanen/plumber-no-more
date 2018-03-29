@@ -159,13 +159,14 @@ static void game_draw() {
 static void game_loop() {
 
     frameSkip = !frameSkip;
+    if(frameSkip)
+        return;
 
     // Pre-draw
     game_pre_draw();
 
     // Update
-    if(!frameSkip)
-        game_update();
+    game_update();
 
     if(sceneTerminated || info_game_over() ) {
 
@@ -194,16 +195,16 @@ void game_init() {
     game_reset();
 
     // Load default map
-    stage_load(1, true);
-
-    // Redraw
-    game_redraw();
+    stage_load(1, false);
 
     // Create objects
     player = pl_create(vec2(6*16 +8, 10*16 +8));
 
     // Set default values
     sceneTerminated = false;
+
+    // Start drawing the stage
+    stage_draw_by_parts(); 
 
 }
 

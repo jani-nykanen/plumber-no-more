@@ -18,11 +18,11 @@ static BITMAP* bmpPlayer;
 // Constants
 static const short H_SPEED = 120;
 static const short WALL_H_SPEED = 200;
-static const short V_SPEED = 320;
+static const short V_SPEED = 400;
 static const short H_ACC = 6 *2;
-static const short V_ACC = 22;
-static const short JUMP1 = 380;
-static const short JUMP2 = 310;
+static const short V_ACC = 25;
+static const short JUMP1 = 460;
+static const short JUMP2 = 375;
 
 
 // Control player
