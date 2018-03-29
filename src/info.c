@@ -94,9 +94,9 @@ void info_update() {
 
     // Update time
     if(time > 0) {
-        -- time;
+        time -= 2;
 
-        if(time == 0) {
+        if(time <= 0) {
 
             gameOver = true;
             game_over(1);

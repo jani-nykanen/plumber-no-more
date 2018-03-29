@@ -27,6 +27,8 @@ SPRITE create_sprite(char w, char h)
 // Animate a sprite
 void spr_animate(SPRITE*s, char row, char start, char end, char speed) {
 
+    speed /= 2;
+
     if(start == end) {
 
 		s->count = 0;

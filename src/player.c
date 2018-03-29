@@ -16,13 +16,13 @@
 static BITMAP* bmpPlayer;
 
 // Constants
-static const short H_SPEED = 80;
-static const short WALL_H_SPEED = 160;
-static const short V_SPEED = 140;
-static const short H_ACC = 6;
-static const short V_ACC = 8;
-static const short JUMP1 = 240;
-static const short JUMP2 = 180;
+static const short H_SPEED = 120;
+static const short WALL_H_SPEED = 200;
+static const short V_SPEED = 320;
+static const short H_ACC = 6 *2;
+static const short V_ACC = 22;
+static const short JUMP1 = 380;
+static const short JUMP2 = 310;
 
 
 // Control player
@@ -178,7 +178,7 @@ static void pl_animate(PLAYER* pl) {
     else {
 
 
-        speed = 8 - abs(pl->speed.x/40)*2;
+        speed = 12 - abs(pl->speed.x/40)*2;
         spr_animate(&pl->spr,0, 1,6, (char)speed);
     }
 
@@ -374,7 +374,7 @@ void pl_floor_collision(PLAYER* pl, short x, short y, short w, bool fatal) {
 
         if(pl->victorious) {
 
-            pl->speed.y = -150;
+            pl->speed.y = -300;
         }
         
 

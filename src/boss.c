@@ -37,21 +37,21 @@ static void boss_move_axis( short* coord,  short* target, short speed) {
 static void boss_move(BOSS* b, PLAYER* pl) {
 
     // Set target
-    b->target.y = 140;
+    b->target.y = 210;
 
     if(pl->pos.x/100 - 8 >= 48) {
 
-        b->target.x = 200 * (pl->pos.x < b->pos.x ? -1 : 1);
+        b->target.x = 300 * (pl->pos.x < b->pos.x ? -1 : 1);
     }
     else {
         
-        b->target.x = 200 * (160*100 < b->pos.x ? -1 : 1);
+        b->target.x = 300 * (160*100 < b->pos.x ? -1 : 1);
     }
     
 
     // Update axes
-    boss_move_axis(&b->speed.x, &b->target.x, 4);
-    boss_move_axis(&b->speed.y, &b->target.y, 8);
+    boss_move_axis(&b->speed.x, &b->target.x, 8);
+    boss_move_axis(&b->speed.y, &b->target.y, 16);
 
     // Move position
     b->pos.x += b->speed.x;
@@ -73,7 +73,7 @@ static void boss_move(BOSS* b, PLAYER* pl) {
     if(b->pos.y/100 >= 10*16-8 && b->speed.y > 0) {
 
         b->pos.y = 100*(10*16-8);
-        b->speed.y = -(200 + (b->jmpHeight % 4) * 50);
+        b->speed.y = -(300 + (b->jmpHeight % 4) * 75);
 
         b->jmpHeight += 7;
     }

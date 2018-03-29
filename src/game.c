@@ -23,8 +23,8 @@
 #include "stdbool.h"
 
 // Object counts
-#define COIN_COUNT 16
-#define ENEMY_COUNT 16
+#define COIN_COUNT 8
+#define ENEMY_COUNT 6
 
 // Game objects
 static PLAYER player;
@@ -37,6 +37,9 @@ static bool sceneTerminated;
 
 // Victory timer
 static short victoryTimer;
+
+// Frame skip
+static bool frameSkip;
 
 
 // Draw coins
@@ -70,7 +73,7 @@ static void game_update() {
     // If victory
     if(player.victorious) {
 
-        if(++ victoryTimer >= 180) {
+        if(++ victoryTimer >= 90) {
 
             game_over(2);
         }
@@ -155,11 +158,15 @@ static void game_draw() {
 // Update game
 static void game_loop() {
 
+    frameSkip = !frameSkip;
+
     // Pre-draw
     game_pre_draw();
 
     // Update
-    game_update();
+    if(!frameSkip)
+        game_update();
+
     if(sceneTerminated || info_game_over() ) {
 
         sceneTerminated = false;

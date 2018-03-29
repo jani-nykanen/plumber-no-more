@@ -91,7 +91,7 @@ static void move_vertical(ENEMY* e, short speed) {
 // Jump behavior (vertical)
 static void jump_vertical(ENEMY* e) {
 
-    const short JUMP_TIME = 60;
+    const short JUMP_TIME = 40;
 
     e->speed.x = 0;
     e->target.x = 0;
@@ -103,15 +103,15 @@ static void jump_vertical(ENEMY* e) {
         
         if(++ e->spcTimer >= JUMP_TIME) {
             
-            e->speed.y = -200;
+            e->speed.y = -320;
             e->spcTimer = 0;
             e->canJump = false;
         }
     }
     else {
 
-        e->target.y = 140;
-        if(e->pos.y >= e->startPos.y) {
+        e->target.y = 300;
+        if(e->pos.y + e->speed.y >= e->startPos.y) {
 
             e->pos.y = e->startPos.y;
             e->canJump = true;
@@ -125,7 +125,7 @@ static void jump_vertical(ENEMY* e) {
 // Jump behavior (horizontal)
 static void jump_horizontal(ENEMY* e) {
 
-    const short JUMP_TIME = 60;
+    const short JUMP_TIME = 40;
 
     e->speed.y = 0;
     e->target.y = 0;
@@ -137,15 +137,15 @@ static void jump_horizontal(ENEMY* e) {
         
         if(-- e->spcTimer <= 0) {
             
-            e->speed.x = -240;
+            e->speed.x = -360;
             e->spcTimer = JUMP_TIME;
             e->canJump = false;
         }
     }
     else {
 
-        e->target.x = 140;
-        if(e->pos.x >= e->startPos.x) {
+        e->target.x = 300;
+        if(e->pos.x + e->speed.x >= e->startPos.x) {
 
             e->pos.x = e->startPos.x;
             e->canJump = true;
@@ -321,13 +321,17 @@ void enemy_create(ENEMY* e, VEC2 pos, char type) {
     e->canJump = true;
 
     // Set accuration
-    if(e->type < 5) {
+    if(e->type < 3) {
 
-        e->acc = 6;
+        e->acc = 12;
+    }
+    else if(e->type == 3 || e->type == 4) {
+
+        e->acc = 16;
     }
     else {
 
-        e->acc = 1;
+        e->acc = 2;
     }
 }
 
@@ -343,12 +347,12 @@ void enemy_update(ENEMY* e) {
         case 0:
         case 1:
 
-            move_horizontal(e, e->type == 0 ? 50 : 40, e->type == 0);
+            move_horizontal(e, e->type == 0 ? 90 : 70, e->type == 0);
             break;
 
         case 2:
 
-            move_vertical(e,40);
+            move_vertical(e,70);
             break;
 
         case 3:
@@ -363,12 +367,12 @@ void enemy_update(ENEMY* e) {
 
         case 5:
 
-            follow_vertical(e,60);
+            follow_vertical(e,100);
             break;
 
         case 6:
 
-            follow_horizontal(e,60);
+            follow_horizontal(e,100);
             break;
 
         default:
