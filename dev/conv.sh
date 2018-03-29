@@ -26,3 +26,5 @@ cd "$(dirname "$0")"
 ../tools/png2bin bitmaps/rocket.png ../ASSETS/BITMAPS/ROCKET.BIN
 ../tools/png2bin bitmaps/cursor.png ../ASSETS/BITMAPS/CURSOR.BIN
 ../tools/png2bin bitmaps/gameover.png ../ASSETS/BITMAPS/GOVER.BIN
+../tools/png2bin bitmaps/creator.png ../ASSETS/BITMAPS/CREATOR.BIN
+../tools/png2bin bitmaps/logo.png ../ASSETS/BITMAPS/LOGO.BIN
