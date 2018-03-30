@@ -7,6 +7,7 @@
 #include "game.h"
 #include "stage.h"
 #include "transition.h"
+#include "sound.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -53,15 +54,21 @@ static void pause_update() {
 
         ++ cursorPos;
         cursorPos %= 3;
+
+        play_sound_effect(SOUND_SELECT);
     }
     else if(stick.y < 0 && delta.y < 0) {
 
         if(cursorPos -- == 0)
             cursorPos = 2;
+
+        play_sound_effect(SOUND_SELECT);
     }
 
     // Enter pressed
     if(input_get_button(3) == PRESSED) {
+
+        play_sound_effect(SOUND_PAUSE);
 
         if(cursorPos == 0) {
 
@@ -76,7 +83,7 @@ static void pause_update() {
         }
         else if(cursorPos == 2) {
 
-            start_transition(sys_terminate);
+            start_transition(game_destroy);
         }
     }
 }

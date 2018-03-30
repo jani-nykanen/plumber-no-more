@@ -34,4 +34,7 @@ void coin_player_collision(PLAYER* pl, COIN* c);
 // Draw a coin
 void coin_draw(COIN* c);
 
+// Destroy coin data
+void coin_destroy();
+
 #endif // __COIN__

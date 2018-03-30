@@ -35,4 +35,7 @@ bool stage_is_final();
 // Move to the next stage
 void stage_move_to_next();
 
+// Destroy stage
+void stage_destroy();
+
 #endif // __STAGE__

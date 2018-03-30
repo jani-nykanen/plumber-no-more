@@ -22,7 +22,6 @@ void main() {
     pause_init();
 
     // Set scene & loop
-    // start_game_scene();
     play_intro();
     sys_loop();
 

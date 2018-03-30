@@ -5,6 +5,7 @@
 
 #include "input.h"
 #include "graph.h"
+#include "audio.h"
 
 #include <dos.h>
 #include <conio.h>
@@ -25,6 +26,7 @@ static void (*fnUpdate)(void) = NULL;
 void sys_init() {
 
     isRunning = true;
+    audio_init();
 }
 
 
@@ -44,10 +46,15 @@ void sys_loop() {
         while(inp(0x3DA) & 8);
         while(!(inp(0x3DA) & 8));
 
+        // Update current scene
         if(fnUpdate != NULL)
             fnUpdate();
 
+        // Update input
         input_update();
+
+        // Update audio
+        audio_update();
     }
 
 }

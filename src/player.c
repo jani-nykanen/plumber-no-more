@@ -5,6 +5,7 @@
 
 #include "info.h"
 #include "stage.h"
+#include "sound.h"
 
 #include "engine/graph.h"
 #include "engine/input.h"
@@ -62,6 +63,7 @@ static void pl_control(PLAYER* pl) {
         if(pl->canJump) {
 
             pl->speed.y = -JUMP1;
+            play_sound_effect(SOUND_JUMP);
 
         }
         else if(pl->wallSlideTimer > 0) {
@@ -70,11 +72,15 @@ static void pl_control(PLAYER* pl) {
             pl->speed.y = -JUMP1;
             pl->doubleJump = false;
             pl->wallSlideTimer = 0;
+
+            play_sound_effect(SOUND_JUMP);
         }
         else if(!pl->doubleJump) {
 
             pl->speed.y = -JUMP2;
             pl->doubleJump = true;
+
+            play_sound_effect(SOUND_JUMP);
         }
     }
     else if(!pl->canJump && pl->speed.y < 0 && fire == RELEASED) {
@@ -285,6 +291,9 @@ void pl_update(PLAYER* pl) {
 
         if(pl->pos.x/100+8 > 10*16 && pl->pos.y/100 > 6*16) {
 
+            // Play victory theme
+            play_sound_effect(SOUND_VICTORY);
+
             pl->victorious = true;
             return;
         }
@@ -358,6 +367,8 @@ void pl_kill(PLAYER* pl) {
     pl->spr.frame = 0;
     pl->spr.row = 2;
     pl->spr.count = 0;
+
+    play_sound_effect(SOUND_DIE);
 }
 
 
@@ -513,4 +524,11 @@ void pl_stage_collision(PLAYER* pl, char* data, short w, short h) {
 
     // Bottom death collision
     pl_floor_collision(pl, 0, 200, 320 ,true);
+}
+
+
+// Destroy player data
+void player_destroy() {
+
+    destroy_bitmap(bmpPlayer);
 }

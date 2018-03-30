@@ -30,4 +30,7 @@ void game_hard_reset();
 // Start game scene
 void start_game_scene();
 
+// Destroy game
+void game_destroy();
+
 #endif // __GAME__

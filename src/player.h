@@ -64,4 +64,7 @@ void pl_wall_collision(PLAYER* pl, short x, short y, short h, bool dir, bool fat
 // Stage collision
 void pl_stage_collision(PLAYER* pl, char* data, short w, short h);
 
+// Destroy player data
+void player_destroy();
+
 #endif // __PLAYER__

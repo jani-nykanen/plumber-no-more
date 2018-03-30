@@ -4,6 +4,7 @@
 #include "coin.h"
 
 #include "info.h"
+#include "sound.h"
 
 #include "engine/graph.h"
 
@@ -66,4 +67,11 @@ void coin_draw(COIN* c) {
     if(!c->exist) return;
 
     draw_bitmap(bmpCoin, c->pos.x,c->pos.y, FLIP_NONE);
+}
+
+
+// Destroy coin data
+void coin_destroy() {
+
+    destroy_bitmap(bmpCoin);
 }

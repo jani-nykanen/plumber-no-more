@@ -31,7 +31,7 @@ static VEC2 delta;
 static VEC2 oldStick;
 // Button key codes
 static const short buttons[] = {
-    45, 44, 25, 28
+    45, 44, 1, 28
 };
 
 

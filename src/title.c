@@ -7,6 +7,7 @@
 #include "game.h"
 #include "stage.h"
 #include "transition.h"
+#include "sound.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -53,6 +54,9 @@ static void title_update() {
         }
 
         if(input_get_button(3) == PRESSED) {
+
+            // Play sound
+            play_sound_effect(SOUND_START);
 
             startTimer = 30;
 
@@ -161,7 +165,7 @@ static short loopTimer;
 // Intro must die
 static void destroy_intro() {
 
-    destoy_bitmap(bmpCreator);
+    destroy_bitmap(bmpCreator);
 }
 
 
@@ -192,6 +196,10 @@ static void loop_intro() {
         set_update_func(draw_blue);
         
         destroy_intro();
+
+        // Play title screen "music"
+        play_sound_effect(SOUND_TITLE);
+
         return;
     }
     else if(loopTimer == 220) {
@@ -208,10 +216,9 @@ static void loop_intro() {
     draw_bitmap_region(bmpCreator, 0,64 + (t-1)*24,96,24, 160-48,104, FLIP_NONE);
 
     // DEBUG
-    if(input_get_button(2) == PRESSED) {
-
-        go_to_game();
-    }
+    //if(input_get_button(2) == PRESSED) {
+    //   go_to_game();
+    //}
 
 }
 

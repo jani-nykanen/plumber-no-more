@@ -11,6 +11,7 @@
 #include "boss.h"
 #include "pause.h"
 #include "gameover.h"
+#include "sound.h"
 
 #include "engine/sys.h"
 #include "engine/graph.h"
@@ -59,7 +60,9 @@ static void game_update() {
     short i = 0;
 
     // Pause, if enter pressed
-    if(input_get_button(3) == PRESSED) {
+    if(input_get_button(2) == PRESSED || input_get_button(3) == PRESSED) {
+
+        play_sound_effect(SOUND_PAUSE);
 
         sceneTerminated = true;
         pause_game();
@@ -101,10 +104,9 @@ static void game_update() {
     info_update();
 
     // DEBUG
-    if(input_get_button(2) == PRESSED) {
-
-        player.pos.x = (320-7)*100;
-    }
+    //if(input_get_button(2) == PRESSED) {
+    //    player.pos.x = (320-7)*100;
+    //}
 }
 
 
@@ -203,6 +205,9 @@ void game_init() {
     // Set default values
     sceneTerminated = false;
 
+    // Play "New game" sound
+    play_sound_effect(SOUND_NEW);
+
     // Start drawing the stage
     stage_draw_by_parts(); 
 
@@ -287,6 +292,9 @@ void game_hard_reset() {
     stage_load(1, false);
     player = pl_create(vec2(6*16 +8, 10*16 +8));
 
+    // Play "New game" sound
+    play_sound_effect(SOUND_NEW);
+
     stage_draw_by_parts(); 
 }
 
@@ -298,3 +306,17 @@ void start_game_scene() {
     set_update_func(game_loop);
 
 }
+
+
+// Destroy game
+void game_destroy() {
+
+    coin_destroy();
+    enemy_destroy();
+    player_destroy();
+    info_destroy();
+    stage_destroy();
+
+    sys_terminate();
+}
+

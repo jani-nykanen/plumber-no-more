@@ -17,6 +17,6 @@ BITMAP;
 BITMAP* load_bitmap(const char* path);
 
 // Destroy a bitmap
-void destoy_bitmap(BITMAP* bmp);
+void destroy_bitmap(BITMAP* bmp);
 
 #endif // __BITMAP__

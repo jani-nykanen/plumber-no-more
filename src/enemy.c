@@ -449,3 +449,10 @@ void enemy_player_collision(ENEMY* e, PLAYER* pl) {
         pl_kill(pl);
     }
 }
+
+
+// Destroy enemy data
+void enemy_destroy() {
+
+    destroy_bitmap(bmpEnemies);
+}

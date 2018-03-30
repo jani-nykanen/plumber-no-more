@@ -38,4 +38,7 @@ bool info_game_over();
 // Get time (no the remaining, but the total time spent)
 unsigned short info_get_time();
 
+// Destroy info data
+void info_destroy();
+
 #endif // __INFO__

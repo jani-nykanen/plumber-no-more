@@ -5,6 +5,7 @@
 
 #include "game.h"
 #include "info.h"
+#include "sound.h"
 
 #include "engine/sys.h"
 #include "engine/bitmap.h"
@@ -183,15 +184,15 @@ void stage_player_collision(PLAYER* pl) {
         // Load next
         stage_move_to_next();
 
-        // Redraw game
-        // game_redraw();
-
         // Move player back to left side
         pl->pos.x = 800 + ( pl->pos.x - (320-8)*100);
 
         // Calculate new starting position
         pl->startPos.x = 800;
         pl->startPos.y = (calc_start_pos()) * 16 * 100 +800;
+
+        // Play sound
+        play_sound_effect(SOUND_TRANS);
     }
 }
 
@@ -328,4 +329,11 @@ void stage_move_to_next() {
 
     columnPointer = 0;
     set_update_func(stage_transition);
+}
+
+
+// Destroy stage
+void stage_destroy() {
+
+    destroy_bitmap(bmpTiles);
 }

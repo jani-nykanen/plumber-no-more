@@ -48,4 +48,7 @@ void enemy_draw(ENEMY* e);
 // Enemy-player collision
 void enemy_player_collision(ENEMY* e, PLAYER* p);
 
+// Destroy enemy data
+void enemy_destroy();
+
 #endif // __ENEMY__

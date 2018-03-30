@@ -4,7 +4,9 @@
 #include "info.h"
 
 #include "gameover.h"
+#include "sound.h"
 
+#include "engine/bitmap.h"
 #include "engine/graph.h"
 
 #include "stdlib.h"
@@ -96,7 +98,10 @@ void info_update() {
     if(time > 0) {
         time -= 2;
 
-        if(time <= 0) {
+        if(time == 0) {
+
+            // Play game over sound
+            play_sound_effect(SOUND_GAMEOVER);
 
             gameOver = true;
             game_over(1);
@@ -164,6 +169,9 @@ char info_reduce_life() {
     
         if(lives == 0) {
 
+            // Play game over sound
+            play_sound_effect(SOUND_GAMEOVER);
+
             gameOver = true;
             game_over(0);
         }
@@ -181,7 +189,14 @@ void info_add_coin() {
         coins = 0;
         ++ lives;
         livesChanged = true;
+
+        play_sound_effect(SOUND_LIFE);
     }
+    else {
+        
+        play_sound_effect(SOUND_COIN);
+    }
+
     coinsChanged = true;
 }
 
@@ -219,4 +234,11 @@ bool info_game_over() {
 unsigned short info_get_time() {
 
     return 60 * 60 * MINUTES - time;
+}
+
+
+// Destroy info data
+void info_destroy() {
+
+    destroy_bitmap(bmpFont);
 }

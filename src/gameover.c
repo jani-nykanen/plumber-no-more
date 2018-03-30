@@ -33,7 +33,7 @@ static const short TIMER_MAX2 = 240;
 // Reset
 static void reset() {
 
-    destoy_bitmap(bmpGameOver);
+    destroy_bitmap(bmpGameOver);
     game_hard_reset();
 }
 
